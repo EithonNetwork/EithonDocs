@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ class Rules {
 	private static Rules singleton = null;
 
 	private static ArrayList<String> rules = null;
+	private static Stack<String> colorStack = null;
 
 	static Rules get()
 	{ 
@@ -41,6 +43,9 @@ class Rules {
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
 			String line = null;
+			colorStack = new Stack<String>();
+			String code = convertToColorCode("grey");
+			colorStack.push(code);
 			while ((line = br.readLine()) != null) {
 				String parsedLine = parseLine(line);
 				rules.add(parsedLine);
@@ -54,15 +59,17 @@ class Rules {
 	private static String parseLine(String line) {
 		StringTokenizer st = new StringTokenizer(line, "[]");
 		String newLine = "";
-
 		while (st.hasMoreElements()) {
 			String token = st.nextToken();
 			if (token.startsWith("color="))
 			{
 				String color = token.substring(6);
-				newLine += convertToColorCode(color);
+				String code = convertToColorCode(color);
+				colorStack.push(code);
+			} else if (token.equalsIgnoreCase("/color")) {
+				colorStack.pop();
 			} else {
-				newLine += token;
+				newLine += colorStack.peek() + token;
 			}
 		}
 
@@ -82,6 +89,10 @@ class Rules {
 		else if (color.equalsIgnoreCase("green"))
 		{
 			result = ChatColor.GREEN + "";
+		}
+		else if (color.equalsIgnoreCase("red"))
+		{
+			result = ChatColor.RED + "";
 		}
 		else if (color.equalsIgnoreCase("aqua"))
 		{
@@ -115,7 +126,7 @@ class Rules {
 		{
 			result = ChatColor.GOLD + "";
 		}
-		else if (color.equalsIgnoreCase("gray"))
+		else if (color.equalsIgnoreCase("gray") || color.equalsIgnoreCase("grey"))
 		{
 			result = ChatColor.GRAY + "";
 		}
@@ -128,7 +139,7 @@ class Rules {
 			result = ChatColor.WHITE + "";
 		}
 		else {
-			result = ChatColor.MAGIC + "";
+			result = "[Unkown color: " + color + "]";
 		}
 		return result;
 	}

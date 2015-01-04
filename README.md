@@ -6,6 +6,7 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
-### dev
+### 1.0 (2015-01-04)
 
 * NEW: /edocs rules shows the content of the EithonDocs/rules.txt file
+* NEW: Color coding works
