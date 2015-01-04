@@ -1,0 +1,22 @@
+name: EithonDocs
+main: se.fredsfursten.eithondocs.EithonDocsPlugin
+version: 0.1
+author: vanbrayne
+description: A Minecraft plugin for rules, etc
+commands:
+  edocs:
+    description: Documentation
+    usage: /edocs rules | help
+    permission-message: You don't have <permission>
+permissions:
+  edocs.*:
+    description: Gives access to all eithondocs commands
+    default: op
+    jumppad.rules: true
+    jumppad.help: true
+  edocs.add:
+    description: Access to /edocs rules command
+    default: op
+  edocs.help:
+    description: Access to /edocs helpcommand
+    default: op
