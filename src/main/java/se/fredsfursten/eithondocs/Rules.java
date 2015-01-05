@@ -16,6 +16,12 @@ class Rules {
 
 	private static ArrayList<String> rules = null;
 	private static Stack<String> colorStack = null;
+	private static boolean isBold = false;
+	private static boolean isStrikeThrough = false;
+	private static boolean isUnderline = false;
+	private static boolean isItalic = false;
+	private static boolean isMagic = false;
+	
 
 	static Rules get()
 	{ 
@@ -59,8 +65,10 @@ class Rules {
 	private static String parseLine(String line) {
 		StringTokenizer st = new StringTokenizer(line, "[]");
 		String newLine = "";
+		boolean firstToken = true;
 		while (st.hasMoreElements()) {
 			String token = st.nextToken();
+			boolean isCode = true;
 			if (token.startsWith("color="))
 			{
 				String color = token.substring(6);
@@ -68,12 +76,46 @@ class Rules {
 				colorStack.push(code);
 			} else if (token.equalsIgnoreCase("/color")) {
 				colorStack.pop();
+			} else if (token.equalsIgnoreCase("b")) {
+				isBold = true;
+			} else if (token.equalsIgnoreCase("s")) {
+				isStrikeThrough = true;
+			} else if (token.equalsIgnoreCase("u")) {
+				isUnderline = true;
+			} else if (token.equalsIgnoreCase("i")) {
+				isItalic = true;
+			} else if (token.equalsIgnoreCase("m")) {
+				isMagic = true;
+			} else if (token.equalsIgnoreCase("/b")) {
+				isBold = false;
+			} else if (token.equalsIgnoreCase("/s")) {
+				isStrikeThrough = false;
+			} else if (token.equalsIgnoreCase("/u")) {
+				isUnderline = false;
+			} else if (token.equalsIgnoreCase("/i")) {
+				isItalic = false;
+			} else if (token.equalsIgnoreCase("/m")) {
+				isMagic = false;
 			} else {
-				newLine += colorStack.peek() + token;
+				isCode = false;
 			}
+			
+			if (firstToken || isCode) newLine += activeCodes();
+			if (!isCode) newLine += token;
+			firstToken = false;
 		}
 
 		return newLine;
+	}
+
+	private static String activeCodes() {
+		String activeCodes = colorStack.peek();
+		if (isBold) activeCodes += ChatColor.BOLD;
+		if (isStrikeThrough) activeCodes += ChatColor.STRIKETHROUGH;
+		if (isUnderline) activeCodes += ChatColor.UNDERLINE;
+		if (isItalic) activeCodes += ChatColor.ITALIC;
+		if (isMagic) activeCodes += ChatColor.MAGIC;
+		return activeCodes;
 	}
 
 	private static String convertToColorCode(String color) {
@@ -140,6 +182,34 @@ class Rules {
 		}
 		else {
 			result = "[Unkown color: " + color + "]";
+		}
+		return result;
+	}
+
+	private static String convertToFontCode(String docsCode) {
+		String result = "";
+		if (docsCode.equalsIgnoreCase("b"))
+		{
+			result = ChatColor.BOLD + "";
+		}
+		else if (docsCode.equalsIgnoreCase("s"))
+		{
+			result = ChatColor.STRIKETHROUGH + "";
+		}
+		else if (docsCode.equalsIgnoreCase("u"))
+		{
+			result = ChatColor.UNDERLINE + "";
+		}
+		else if (docsCode.equalsIgnoreCase("i"))
+		{
+			result = ChatColor.ITALIC + "";
+		}
+		else if (docsCode.equalsIgnoreCase("m"))
+		{
+			result = ChatColor.MAGIC + "";
+		}
+		else {
+			result = "[Unkown code: " + docsCode + "]";
 		}
 		return result;
 	}

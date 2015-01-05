@@ -1,6 +1,6 @@
 name: EithonDocs
 main: se.fredsfursten.eithondocs.EithonDocsPlugin
-version: 1.0
+version: 1.0-dev
 author: vanbrayne
 description: A Minecraft plugin for rules, etc
 commands:
