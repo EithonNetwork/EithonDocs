@@ -38,6 +38,12 @@ public class Commands {
 		}
 	}
 
+	public void reloadCommand(Player player, String[] args) {
+		if (!verifyPermission(player, "edocs.reload")) return;
+		
+		Rules.get().reloadRules();
+	}
+
 	void helpCommand(Player player, String[] args)
 	{
 		if (!verifyPermission(player, "edocs.help")) return;

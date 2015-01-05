@@ -21,7 +21,6 @@ class Rules {
 	private static boolean isUnderline = false;
 	private static boolean isItalic = false;
 	private static boolean isMagic = false;
-	
 
 	static Rules get()
 	{ 
@@ -35,8 +34,12 @@ class Rules {
 		return rules;
 	}
 
-	private Rules(){
+	public void reloadRules() {
 		parseFile();
+	}
+
+	private Rules(){
+		reloadRules();
 	}
 
 	private static void parseFile() {
@@ -75,7 +78,9 @@ class Rules {
 				String code = convertToColorCode(color);
 				colorStack.push(code);
 			} else if (token.equalsIgnoreCase("/color")) {
-				colorStack.pop();
+				if (colorStack.size() > 1) {
+					colorStack.pop();
+				}
 			} else if (token.equalsIgnoreCase("b")) {
 				isBold = true;
 			} else if (token.equalsIgnoreCase("s")) {
@@ -99,7 +104,7 @@ class Rules {
 			} else {
 				isCode = false;
 			}
-			
+
 			if (firstToken || isCode) newLine += activeCodes();
 			if (!isCode) newLine += token;
 			firstToken = false;

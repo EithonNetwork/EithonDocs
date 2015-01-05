@@ -35,6 +35,8 @@ public final class EithonDocsPlugin extends JavaPlugin implements Listener {
 		String command = args[0].toLowerCase();
 		if (command.equals("rules")) {
 			Commands.get().rulesCommand(player, args);
+		} else if (command.equals("reload")) {
+			Commands.get().reloadCommand(player, args);
 		} else if (command.equals("help")) {
 			Commands.get().helpCommand(player, args);
 		} else {
