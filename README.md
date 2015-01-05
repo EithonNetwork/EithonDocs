@@ -11,7 +11,7 @@ Listens to the following /edocs commands:
 
 ## Release history
 
-### dev
+### 1.1 (2015-01-05)
 
 * NEW: Added a reload command.
 * NEW: Now has support for bold, strikethrough, underline, italic and magic
