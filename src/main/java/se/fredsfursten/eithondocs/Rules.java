@@ -1,6 +1,7 @@
 package se.fredsfursten.eithondocs;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,11 +11,12 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.bukkit.ChatColor;
+import org.bukkit.util.ChatPaginator;
 
 class Rules {
 	private static Rules singleton = null;
 
-	private static ArrayList<String> rules = null;
+	private static ArrayList<ChatPaginator.ChatPage> chatPages = null;
 	private static Stack<String> colorStack = null;
 	private static boolean isBold = false;
 	private static boolean isStrikeThrough = false;
@@ -30,8 +32,13 @@ class Rules {
 		return singleton;
 	}
 
-	public ArrayList<String> getRules(){
-		return rules;
+	public int getNumberOfPages(){
+		return chatPages.size();
+	}
+
+	public String[] getPage(int pageNumber){
+		if ((pageNumber < 1) || (pageNumber > getNumberOfPages())) return null;
+		return chatPages.get(pageNumber-1).getLines();
 	}
 
 	public void reloadRules() {
@@ -44,7 +51,8 @@ class Rules {
 
 	private static void parseFile() {
 		File fileToParse = new File("plugins" + File.separator +"EithonDocs" + File.separator + "rules.txt");
-		rules = new ArrayList<String>();
+		String rules = "";
+		boolean firstLine = true;
 		try {
 			FileInputStream fis = new FileInputStream(fileToParse);
 
@@ -57,12 +65,27 @@ class Rules {
 			colorStack.push(code);
 			while ((line = br.readLine()) != null) {
 				String parsedLine = parseLine(line);
-				rules.add(parsedLine);
+				if (firstLine) firstLine = false;
+				else rules += "\n";
+				rules+=parsedLine;
 			}
 			br.close();
 		} catch (IOException e) {
-			rules.add(String.format("Failed to read the rules from \"%s\".", fileToParse.toString()));
+			if (firstLine) firstLine = false;
+			else rules += "\n";
+			rules += String.format("Failed to read the rules from \"%s\".", fileToParse.toString());
 		}
+		
+		chatPages = new ArrayList<ChatPaginator.ChatPage>();
+		ChatPaginator.ChatPage chatPage = null;
+		int i = 1;
+		do {
+			chatPage = ChatPaginator.paginate(rules, i,
+					ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH-9, 
+					ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT);
+			chatPages.add(chatPage);
+			i++;
+		} while (i <= chatPage.getTotalPages());
 	}
 
 	private static String parseLine(String line) {

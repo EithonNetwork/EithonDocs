@@ -11,6 +11,10 @@ Listens to the following /edocs commands:
 
 ## Release history
 
+### 1.2 (2015-01-06)
+
+* NEW: Added pagination
+
 ### 1.1 (2015-01-05)
 
 * NEW: Added a reload command.

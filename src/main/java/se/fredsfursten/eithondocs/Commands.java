@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Commands {
 	private static Commands singleton = null;
+	private static final String RULES_COMMAND = "/edocs rules [<page>]";
+	private static final int ROWS_TO_SHOW = 8;
 
 	private JavaPlugin plugin = null;
 
@@ -31,11 +33,19 @@ public class Commands {
 	void rulesCommand(Player player, String[] args)
 	{
 		if (!verifyPermission(player, "edocs.rules")) return;
-		
-		ArrayList<String> rules = Rules.get().getRules();
-		for (String message : rules) {
-			player.sendMessage(message);
+		if (!arrayLengthIsWithinInterval(args, 1, 2)) {
+			player.sendMessage(RULES_COMMAND);
+			return;
 		}
+		
+		int pageCount = Rules.get().getNumberOfPages();
+		
+		int displayPage = 1;
+		if (args.length > 1) displayPage = Integer.parseInt(args[1]);
+		if (displayPage > pageCount) displayPage = pageCount;
+		String[] pageLines = Rules.get().getPage(displayPage);
+		player.sendMessage(String.format("Page %d of %d", displayPage, pageCount));
+		player.sendMessage(pageLines);
 	}
 
 	public void reloadCommand(Player player, String[] args) {
@@ -56,5 +66,9 @@ public class Commands {
 		if (player.hasPermission(permission)) return true;
 		player.sendMessage("You must have permission " + permission);
 		return false;
+	}
+
+	private boolean arrayLengthIsWithinInterval(Object[] args, int min, int max) {
+		return (args.length >= min) && (args.length <= max);
 	}
 }
