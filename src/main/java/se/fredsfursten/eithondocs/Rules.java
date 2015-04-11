@@ -9,10 +9,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.StringTokenizer;
+
+import se.fredsfursten.plugintools.PluginConfig;
 import se.fredsfursten.textwrap.ChatPage;
 import se.fredsfursten.textwrap.Paginator;
 
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.java.JavaPlugin;
 
 class Rules {
 	private static Rules singleton = null;
@@ -24,13 +27,29 @@ class Rules {
 	private static boolean isUnderline = false;
 	private static boolean isItalic = false;
 	private static boolean isMagic = false;
-
+	private static PluginConfig configuration;
+	private int chatBoxWidth;
+	
 	static Rules get()
 	{ 
 		if (singleton == null) {
 			singleton = new Rules();
 		}
 		return singleton;
+	}
+
+	public void enable(JavaPlugin plugin)
+	{
+		if (configuration == null) {
+			configuration = new PluginConfig(plugin, "config.yml");
+		} else {
+			configuration.load();
+		}
+		chatBoxWidth = configuration.getFileConfiguration().getInt("ChatBoxWidth");
+	}
+
+	public void disable()
+	{
 	}
 
 	public int getNumberOfPages(){
@@ -50,7 +69,7 @@ class Rules {
 		reloadRules();
 	}
 
-	private static void parseFile() {
+	private void parseFile() {
 		File fileToParse = new File("plugins" + File.separator +"EithonDocs" + File.separator + "rules.txt");
 		String rules = "";
 		boolean firstLine = true;
@@ -81,7 +100,7 @@ class Rules {
 		ChatPage chatPage = null;
 		int i = 1;
 		do {
-			chatPage = Paginator.paginate(rules, i);
+			chatPage = Paginator.paginate(rules, i, this.chatBoxWidth, "", Character.toString(ChatColor.COLOR_CHAR));
 			chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());

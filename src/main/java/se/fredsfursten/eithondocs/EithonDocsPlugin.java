@@ -12,11 +12,13 @@ public final class EithonDocsPlugin extends JavaPlugin implements Listener {
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);		
 		Commands.get().enable(this);
+		Rules.get().enable(this);
 	}
 
 	@Override
 	public void onDisable() {
 		Commands.get().disable();
+		Rules.get().disable();
 	}
 
 	@Override
