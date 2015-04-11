@@ -9,14 +9,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import se.fredsfursten.textwrap.ChatPage;
+import se.fredsfursten.textwrap.Paginator;
 
 import org.bukkit.ChatColor;
-import org.bukkit.util.ChatPaginator;
 
 class Rules {
 	private static Rules singleton = null;
 
-	private static ArrayList<ChatPaginator.ChatPage> chatPages = null;
+	private static ArrayList<ChatPage> chatPages = null;
 	private static Stack<String> colorStack = null;
 	private static boolean isBold = false;
 	private static boolean isStrikeThrough = false;
@@ -64,7 +65,7 @@ class Rules {
 			String code = convertToColorCode("grey");
 			colorStack.push(code);
 			while ((line = br.readLine()) != null) {
-				String parsedLine = parseLine(line);
+				String parsedLine = parseLine(line, firstLine);
 				if (firstLine) firstLine = false;
 				else rules += "\n";
 				rules+=parsedLine;
@@ -76,22 +77,19 @@ class Rules {
 			rules += String.format("Failed to read the rules from \"%s\".", fileToParse.toString());
 		}
 		
-		chatPages = new ArrayList<ChatPaginator.ChatPage>();
-		ChatPaginator.ChatPage chatPage = null;
+		chatPages = new ArrayList<ChatPage>();
+		ChatPage chatPage = null;
 		int i = 1;
 		do {
-			chatPage = ChatPaginator.paginate(rules, i,
-					ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH-9, 
-					ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT);
+			chatPage = Paginator.paginate(rules, i);
 			chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());
 	}
 
-	private static String parseLine(String line) {
+	private static String parseLine(String line, boolean firstLine) {
 		StringTokenizer st = new StringTokenizer(line, "[]");
 		String newLine = "";
-		boolean firstToken = true;
 		while (st.hasMoreElements()) {
 			String token = st.nextToken();
 			boolean isCode = true;
@@ -128,9 +126,8 @@ class Rules {
 				isCode = false;
 			}
 
-			if (firstToken || isCode) newLine += activeCodes();
+			if (firstLine || isCode) newLine += activeCodes();
 			if (!isCode) newLine += token;
-			firstToken = false;
 		}
 
 		return newLine;

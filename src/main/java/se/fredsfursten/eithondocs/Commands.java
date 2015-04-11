@@ -1,11 +1,15 @@
 package se.fredsfursten.eithondocs;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import se.fredsfursten.plugintools.PluginConfig;
+
 public class Commands {
+	private static PluginConfig configuration;
 	private static Commands singleton = null;
 	private static final String RULES_COMMAND = "/edocs rules [<page>]";
 	private static final int ROWS_TO_SHOW = 8;
@@ -25,6 +29,7 @@ public class Commands {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
+		configuration = new PluginConfig(plugin, "config.yml");
 	}
 
 	void disable() {
@@ -45,6 +50,9 @@ public class Commands {
 		if (displayPage > pageCount) displayPage = pageCount;
 		String[] pageLines = Rules.get().getPage(displayPage);
 		player.sendMessage(String.format("Page %d of %d", displayPage, pageCount));
+		for (String line : pageLines) {
+			configuration.debugInfo("line: \"%s\"", line);
+		}
 		player.sendMessage(pageLines);
 	}
 
