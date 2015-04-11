@@ -107,6 +107,7 @@ class Rules {
 	private static String parseLine(String line, boolean firstLine) {
 		StringTokenizer st = new StringTokenizer(line, "[]");
 		String newLine = "";
+		boolean firstToken = true;
 		while (st.hasMoreElements()) {
 			String token = st.nextToken();
 			boolean isCode = true;
@@ -143,8 +144,9 @@ class Rules {
 				isCode = false;
 			}
 
-			if (firstLine || isCode) newLine += activeCodes();
+			if (firstLine || firstToken || isCode) newLine += activeCodes();
 			if (!isCode) newLine += token;
+			firstToken = false;
 		}
 
 		return newLine;
