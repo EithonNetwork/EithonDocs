@@ -45,7 +45,9 @@ class Rules {
 		} else {
 			configuration.load();
 		}
-		chatBoxWidth = configuration.getFileConfiguration().getInt("ChatBoxWidth");
+		this.chatBoxWidth = configuration.getFileConfiguration().getInt("ChatBoxWidth");
+		configuration.debugInfo("ChatBoxWidth: %d", this.chatBoxWidth);
+		reloadRules();
 	}
 
 	public void disable()
@@ -64,11 +66,7 @@ class Rules {
 	public void reloadRules() {
 		parseFile();
 	}
-
-	private Rules(){
-		reloadRules();
-	}
-
+	
 	private void parseFile() {
 		File fileToParse = new File("plugins" + File.separator +"EithonDocs" + File.separator + "rules.txt");
 		String rules = "";
@@ -100,7 +98,7 @@ class Rules {
 		ChatPage chatPage = null;
 		int i = 1;
 		do {
-			chatPage = Paginator.paginate(rules, i, this.chatBoxWidth, "", Character.toString(ChatColor.COLOR_CHAR));
+			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), this.chatBoxWidth, 9);
 			chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());
