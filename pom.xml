@@ -33,7 +33,7 @@
        <dependency>
             <groupId>se.fredsfursten.eithonlibraryplugin</groupId>
             <artifactId>EithonLibraryPlugin</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <scope>system</scope>
             <systemPath>C:\Users\Lars\workspace\EithonLibraryPlugin.jar</systemPath>
         </dependency>

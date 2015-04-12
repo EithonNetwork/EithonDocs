@@ -3,6 +3,7 @@ main: se.fredsfursten.eithondocs.EithonDocsPlugin
 version: 2.0
 author: vanbrayne
 description: A Minecraft plugin for rules, etc
+depend: [EithonLibraryPlugin]
 commands:
   edocs:
     description: Documentation

@@ -1,7 +1,6 @@
 package se.fredsfursten.eithondocs;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,12 +9,12 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import org.bukkit.ChatColor;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import se.fredsfursten.plugintools.PluginConfig;
 import se.fredsfursten.textwrap.ChatPage;
 import se.fredsfursten.textwrap.Paginator;
-
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
 
 class Rules {
 	private static Rules singleton = null;
@@ -27,7 +26,6 @@ class Rules {
 	private static boolean isUnderline = false;
 	private static boolean isItalic = false;
 	private static boolean isMagic = false;
-	private static PluginConfig configuration;
 	private int chatBoxWidth;
 	
 	static Rules get()
@@ -40,13 +38,8 @@ class Rules {
 
 	public void enable(JavaPlugin plugin)
 	{
-		if (configuration == null) {
-			configuration = new PluginConfig(plugin, "config.yml");
-		} else {
-			configuration.load();
-		}
-		this.chatBoxWidth = configuration.getFileConfiguration().getInt("ChatBoxWidth");
-		configuration.debugInfo("ChatBoxWidth: %d", this.chatBoxWidth);
+		PluginConfig config = PluginConfig.get(plugin);
+		this.chatBoxWidth = config.getInt("ChatBoxWidth", 320);
 		reloadRules();
 	}
 

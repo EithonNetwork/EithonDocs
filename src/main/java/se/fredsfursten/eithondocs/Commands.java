@@ -4,15 +4,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import se.fredsfursten.plugintools.ConfigurableFormat;
+import se.fredsfursten.plugintools.Misc;
 import se.fredsfursten.plugintools.PluginConfig;
 
 public class Commands {
-	private static PluginConfig configuration;
 	private static Commands singleton = null;
 	private static final String RULES_COMMAND = "/edocs rules [<page>]";
 	private ConfigurableFormat pageOf;
-
-	private JavaPlugin plugin = null;
 
 	private Commands() {
 	}
@@ -26,9 +24,8 @@ public class Commands {
 	}
 
 	void enable(JavaPlugin plugin){
-		this.plugin = plugin;
-		configuration = new PluginConfig(plugin, "config.yml");
-		this.pageOf = new ConfigurableFormat("PageOfMessage", 2, "Page %d of %d");
+		PluginConfig config = PluginConfig.get(plugin);
+		this.pageOf = new ConfigurableFormat(config, "PageOfMessage", 2, "Page %d of %d");
 	}
 
 	void disable() {
@@ -52,7 +49,7 @@ public class Commands {
 		String[] pageLines = Rules.get().getPage(displayPage);
 		this.pageOf.sendMessage(player, displayPage, pageCount);
 		for (String line : pageLines) {
-			configuration.debugInfo("line: \"%s\"", line);
+			Misc.debugInfo("line: \"%s\"", line);
 		}
 		player.sendMessage(pageLines);
 	}
