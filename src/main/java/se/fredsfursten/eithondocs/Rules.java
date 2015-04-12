@@ -1,7 +1,6 @@
 package se.fredsfursten.eithondocs;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,25 +10,41 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.bukkit.ChatColor;
-import org.bukkit.util.ChatPaginator;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import se.fredsfursten.plugintools.PluginConfig;
+import se.fredsfursten.textwrap.ChatPage;
+import se.fredsfursten.textwrap.Paginator;
 
 class Rules {
 	private static Rules singleton = null;
 
-	private static ArrayList<ChatPaginator.ChatPage> chatPages = null;
+	private static ArrayList<ChatPage> chatPages = null;
 	private static Stack<String> colorStack = null;
 	private static boolean isBold = false;
 	private static boolean isStrikeThrough = false;
 	private static boolean isUnderline = false;
 	private static boolean isItalic = false;
 	private static boolean isMagic = false;
-
+	private int chatBoxWidth;
+	
 	static Rules get()
 	{ 
 		if (singleton == null) {
 			singleton = new Rules();
 		}
 		return singleton;
+	}
+
+	public void enable(JavaPlugin plugin)
+	{
+		PluginConfig config = PluginConfig.get(plugin);
+		this.chatBoxWidth = config.getInt("ChatBoxWidth", 320);
+		reloadRules();
+	}
+
+	public void disable()
+	{
 	}
 
 	public int getNumberOfPages(){
@@ -44,12 +59,8 @@ class Rules {
 	public void reloadRules() {
 		parseFile();
 	}
-
-	private Rules(){
-		reloadRules();
-	}
-
-	private static void parseFile() {
+	
+	private void parseFile() {
 		File fileToParse = new File("plugins" + File.separator +"EithonDocs" + File.separator + "rules.txt");
 		String rules = "";
 		boolean firstLine = true;
@@ -64,7 +75,7 @@ class Rules {
 			String code = convertToColorCode("grey");
 			colorStack.push(code);
 			while ((line = br.readLine()) != null) {
-				String parsedLine = parseLine(line);
+				String parsedLine = parseLine(line, firstLine);
 				if (firstLine) firstLine = false;
 				else rules += "\n";
 				rules+=parsedLine;
@@ -76,19 +87,17 @@ class Rules {
 			rules += String.format("Failed to read the rules from \"%s\".", fileToParse.toString());
 		}
 		
-		chatPages = new ArrayList<ChatPaginator.ChatPage>();
-		ChatPaginator.ChatPage chatPage = null;
+		chatPages = new ArrayList<ChatPage>();
+		ChatPage chatPage = null;
 		int i = 1;
 		do {
-			chatPage = ChatPaginator.paginate(rules, i,
-					ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH-9, 
-					ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT);
+			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), this.chatBoxWidth, 9);
 			chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());
 	}
 
-	private static String parseLine(String line) {
+	private static String parseLine(String line, boolean firstLine) {
 		StringTokenizer st = new StringTokenizer(line, "[]");
 		String newLine = "";
 		boolean firstToken = true;
@@ -128,7 +137,7 @@ class Rules {
 				isCode = false;
 			}
 
-			if (firstToken || isCode) newLine += activeCodes();
+			if (firstLine || firstToken || isCode) newLine += activeCodes();
 			if (!isCode) newLine += token;
 			firstToken = false;
 		}

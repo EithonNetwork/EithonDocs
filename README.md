@@ -11,6 +11,10 @@ Listens to the following /edocs commands:
 
 ## Release history
 
+### 2.0 (2015-04-11)
+
+* NEW: Complete rewrite of the word wrap functionality to become pixel perfect.
+
 ### 1.2 (2015-01-06)
 
 * NEW: Added pagination

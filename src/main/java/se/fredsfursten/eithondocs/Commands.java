@@ -1,16 +1,16 @@
 package se.fredsfursten.eithondocs;
 
-import java.util.ArrayList;
-
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import se.fredsfursten.plugintools.ConfigurableFormat;
+import se.fredsfursten.plugintools.Misc;
+import se.fredsfursten.plugintools.PluginConfig;
 
 public class Commands {
 	private static Commands singleton = null;
 	private static final String RULES_COMMAND = "/edocs rules [<page>]";
-	private static final int ROWS_TO_SHOW = 8;
-
-	private JavaPlugin plugin = null;
+	private ConfigurableFormat pageOf;
 
 	private Commands() {
 	}
@@ -24,7 +24,8 @@ public class Commands {
 	}
 
 	void enable(JavaPlugin plugin){
-		this.plugin = plugin;
+		PluginConfig config = PluginConfig.get(plugin);
+		this.pageOf = new ConfigurableFormat(config, "PageOfMessage", 2, "Page %d of %d");
 	}
 
 	void disable() {
@@ -37,27 +38,32 @@ public class Commands {
 			player.sendMessage(RULES_COMMAND);
 			return;
 		}
-		
+
 		int pageCount = Rules.get().getNumberOfPages();
-		
+
 		int displayPage = 1;
-		if (args.length > 1) displayPage = Integer.parseInt(args[1]);
+		try {
+			if (args.length > 1) displayPage = Integer.parseInt(args[1]);
+		} catch (Exception e) {}
 		if (displayPage > pageCount) displayPage = pageCount;
 		String[] pageLines = Rules.get().getPage(displayPage);
-		player.sendMessage(String.format("Page %d of %d", displayPage, pageCount));
+		this.pageOf.sendMessage(player, displayPage, pageCount);
+		for (String line : pageLines) {
+			Misc.debugInfo("line: \"%s\"", line);
+		}
 		player.sendMessage(pageLines);
 	}
 
 	public void reloadCommand(Player player, String[] args) {
 		if (!verifyPermission(player, "edocs.reload")) return;
-		
+
 		Rules.get().reloadRules();
 	}
 
 	void helpCommand(Player player, String[] args)
 	{
 		if (!verifyPermission(player, "edocs.help")) return;
-		
+
 		player.sendMessage("HELP");
 	}
 
