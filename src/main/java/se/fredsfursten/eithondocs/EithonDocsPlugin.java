@@ -15,41 +15,18 @@ public final class EithonDocsPlugin extends JavaPlugin implements Listener {
 	public void onEnable() {
 		Misc.enable(this);
 		PluginConfig.get(this);
-		getServer().getPluginManager().registerEvents(this, this);
 		Commands.get().enable(this);
-		Rules.get().enable(this);
+		Doc.initialize(this);
+		getServer().getPluginManager().registerEvents(this, this);
 	}
 
 	@Override
 	public void onDisable() {
 		Commands.get().disable();
-		Rules.get().disable();
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage("You must be a player!");
-			return false;
-		}
-		if (args.length < 1) {
-			sender.sendMessage("Incomplete command...");
-			return false;
-		}
-
-		Player player = (Player) sender;
-
-		String command = args[0].toLowerCase();
-		if (command.equals("rules")) {
-			Commands.get().rulesCommand(player, args);
-		} else if (command.equals("reload")) {
-			Commands.get().reloadCommand(player, args);
-		} else if (command.equals("help")) {
-			Commands.get().helpCommand(player, args);
-		} else {
-			sender.sendMessage("Could not understand command.");
-			return false;
-		}
-		return true;
+		return Commands.get().onCommand(sender, args);
 	}
 }

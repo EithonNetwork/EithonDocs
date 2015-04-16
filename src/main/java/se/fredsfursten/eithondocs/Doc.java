@@ -16,44 +16,34 @@ import se.fredsfursten.plugintools.PluginConfig;
 import se.fredsfursten.textwrap.ChatPage;
 import se.fredsfursten.textwrap.Paginator;
 
-class Rules {
-	private static Rules singleton = null;
+class Doc {
+	private ArrayList<ChatPage> chatPages = null;
+	private Stack<String> colorStack = null;
+	private boolean isBold = false;
+	private boolean isStrikeThrough = false;
+	private boolean isUnderline = false;
+	private boolean isItalic = false;
+	private boolean isMagic = false;
+	private File file;
+	private static int chatBoxWidth = 320;
+	private static JavaPlugin _plugin;
 
-	private static ArrayList<ChatPage> chatPages = null;
-	private static Stack<String> colorStack = null;
-	private static boolean isBold = false;
-	private static boolean isStrikeThrough = false;
-	private static boolean isUnderline = false;
-	private static boolean isItalic = false;
-	private static boolean isMagic = false;
-	private int chatBoxWidth;
-	
-	static Rules get()
-	{ 
-		if (singleton == null) {
-			singleton = new Rules();
-		}
-		return singleton;
+	public static void initialize(JavaPlugin plugin) {
+		_plugin = plugin;
+		chatBoxWidth = PluginConfig.get(_plugin).getInt("ChatBoxWidth", 320);
 	}
-
-	public void enable(JavaPlugin plugin)
-	{
-		PluginConfig config = PluginConfig.get(plugin);
-		this.chatBoxWidth = config.getInt("ChatBoxWidth", 320);
+	
+	public Doc(File file) {
+		this.file = file;
 		reloadRules();
 	}
-
-	public void disable()
-	{
-	}
-
 	public int getNumberOfPages(){
-		return chatPages.size();
+		return this.chatPages.size();
 	}
 
 	public String[] getPage(int pageNumber){
 		if ((pageNumber < 1) || (pageNumber > getNumberOfPages())) return null;
-		return chatPages.get(pageNumber-1).getLines();
+		return this.chatPages.get(pageNumber-1).getLines();
 	}
 
 	public void reloadRules() {
@@ -61,19 +51,18 @@ class Rules {
 	}
 	
 	private void parseFile() {
-		File fileToParse = new File("plugins" + File.separator +"EithonDocs" + File.separator + "rules.txt");
 		String rules = "";
 		boolean firstLine = true;
 		try {
-			FileInputStream fis = new FileInputStream(fileToParse);
+			FileInputStream fis = new FileInputStream(this.file);
 
 			//Construct BufferedReader from InputStreamReader
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
 			String line = null;
-			colorStack = new Stack<String>();
+			this.colorStack = new Stack<String>();
 			String code = convertToColorCode("grey");
-			colorStack.push(code);
+			this.colorStack.push(code);
 			while ((line = br.readLine()) != null) {
 				String parsedLine = parseLine(line, firstLine);
 				if (firstLine) firstLine = false;
@@ -84,20 +73,20 @@ class Rules {
 		} catch (IOException e) {
 			if (firstLine) firstLine = false;
 			else rules += "\n";
-			rules += String.format("Failed to read the rules from \"%s\".", fileToParse.toString());
+			rules += String.format("Failed to read the rules from \"%s\".", this.file.toString());
 		}
 		
-		chatPages = new ArrayList<ChatPage>();
+		this.chatPages = new ArrayList<ChatPage>();
 		ChatPage chatPage = null;
 		int i = 1;
 		do {
-			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), this.chatBoxWidth, 9);
-			chatPages.add(chatPage);
+			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), chatBoxWidth, 9);
+			this.chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());
 	}
 
-	private static String parseLine(String line, boolean firstLine) {
+	private String parseLine(String line, boolean firstLine) {
 		StringTokenizer st = new StringTokenizer(line, "[]");
 		String newLine = "";
 		boolean firstToken = true;
@@ -108,31 +97,31 @@ class Rules {
 			{
 				String color = token.substring(6);
 				String code = convertToColorCode(color);
-				colorStack.push(code);
+				this.colorStack.push(code);
 			} else if (token.equalsIgnoreCase("/color")) {
-				if (colorStack.size() > 1) {
-					colorStack.pop();
+				if (this.colorStack.size() > 1) {
+					this.colorStack.pop();
 				}
 			} else if (token.equalsIgnoreCase("b")) {
-				isBold = true;
+				this.isBold = true;
 			} else if (token.equalsIgnoreCase("s")) {
-				isStrikeThrough = true;
+				this.isStrikeThrough = true;
 			} else if (token.equalsIgnoreCase("u")) {
-				isUnderline = true;
+				this.isUnderline = true;
 			} else if (token.equalsIgnoreCase("i")) {
-				isItalic = true;
+				this.isItalic = true;
 			} else if (token.equalsIgnoreCase("m")) {
-				isMagic = true;
+				this.isMagic = true;
 			} else if (token.equalsIgnoreCase("/b")) {
-				isBold = false;
+				this.isBold = false;
 			} else if (token.equalsIgnoreCase("/s")) {
-				isStrikeThrough = false;
+				this.isStrikeThrough = false;
 			} else if (token.equalsIgnoreCase("/u")) {
-				isUnderline = false;
+				this.isUnderline = false;
 			} else if (token.equalsIgnoreCase("/i")) {
-				isItalic = false;
+				this.isItalic = false;
 			} else if (token.equalsIgnoreCase("/m")) {
-				isMagic = false;
+				this.isMagic = false;
 			} else {
 				isCode = false;
 			}
@@ -145,13 +134,13 @@ class Rules {
 		return newLine;
 	}
 
-	private static String activeCodes() {
-		String activeCodes = colorStack.peek();
-		if (isBold) activeCodes += ChatColor.BOLD;
-		if (isStrikeThrough) activeCodes += ChatColor.STRIKETHROUGH;
-		if (isUnderline) activeCodes += ChatColor.UNDERLINE;
-		if (isItalic) activeCodes += ChatColor.ITALIC;
-		if (isMagic) activeCodes += ChatColor.MAGIC;
+	private String activeCodes() {
+		String activeCodes = this.colorStack.peek();
+		if (this.isBold) activeCodes += ChatColor.BOLD;
+		if (this.isStrikeThrough) activeCodes += ChatColor.STRIKETHROUGH;
+		if (this.isUnderline) activeCodes += ChatColor.UNDERLINE;
+		if (this.isItalic) activeCodes += ChatColor.ITALIC;
+		if (this.isMagic) activeCodes += ChatColor.MAGIC;
 		return activeCodes;
 	}
 

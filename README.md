@@ -11,6 +11,10 @@ Listens to the following /edocs commands:
 
 ## Release history
 
+### 2.1 (2015-04-16)
+
+* NEW: Now can handle any file in the EithonDocs plugin folder named *.txt
+
 ### 2.0 (2015-04-11)
 
 * NEW: Complete rewrite of the word wrap functionality to become pixel perfect.
