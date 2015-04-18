@@ -6,7 +6,7 @@ import java.util.HashMap;
 import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
-import net.eithon.library.misc.Debug.DebugPrintLevel;
+import net.eithon.library.plugin.Logger.DebugPrintLevel;
 import net.eithon.library.plugin.ConfigurableMessage;
 
 import org.bukkit.command.CommandSender;
@@ -100,9 +100,9 @@ public class Commands {
 		if (page > pageCount) page = pageCount;
 		String[] pageLines = doc.getPage(page);
 		this._pageOf.sendMessage(player, page, pageCount);
-		if (this._eithonPlugin.getDebug().shouldDebug(DebugPrintLevel.VERBOSE)) {
+		if (this._eithonPlugin.getLogger().shouldDebug(DebugPrintLevel.VERBOSE)) {
 			for (String line : pageLines) {
-				this._eithonPlugin.getDebug().debug(DebugPrintLevel.VERBOSE, "line: \"%s\"", line);
+				this._eithonPlugin.getLogger().debug(DebugPrintLevel.VERBOSE, "line: \"%s\"", line);
 			}
 		}
 		player.sendMessage(pageLines);
