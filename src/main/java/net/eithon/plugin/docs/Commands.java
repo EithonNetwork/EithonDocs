@@ -1,4 +1,4 @@
-package net.eithon.plugin.eithondocs;
+package net.eithon.plugin.docs;
 
 import java.io.File;
 import java.util.HashMap;
