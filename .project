@@ -3,7 +3,7 @@
 	<name>EithonDocs</name>
 	<comment/>
 	<projects>
-		<project>EithonDocs</project>
+		<project>EithonLibrary</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
