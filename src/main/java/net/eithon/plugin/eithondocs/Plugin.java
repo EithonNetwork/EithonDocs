@@ -1,23 +1,21 @@
-package se.fredsfursten.eithondocs;
+package net.eithon.plugin.eithondocs;
+
+import net.eithon.library.extensions.EithonPlugin;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import se.fredsfursten.plugintools.Misc;
-import se.fredsfursten.plugintools.PluginConfig;
-
-public final class EithonDocsPlugin extends JavaPlugin implements Listener {
+public final class Plugin extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
-		Misc.enable(this);
-		PluginConfig.get(this);
-		Commands.get().enable(this);
-		Doc.initialize(this);
-		getServer().getPluginManager().registerEvents(this, this);
+		EithonPlugin eithonPlugin = EithonPlugin.get(this);
+		eithonPlugin.enable();
+		Commands.get().disable();
+		Doc.initialize(eithonPlugin);
+		//getServer().getPluginManager().registerEvents(this, this);
 	}
 
 	@Override

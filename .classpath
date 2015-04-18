@@ -28,7 +28,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Lars/workspace/PluginTools/target/PluginTools-0.0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Lars/workspace/EithonLibraryPlugin.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/EithonLibrary.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

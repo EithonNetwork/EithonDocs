@@ -1,4 +1,4 @@
-package se.fredsfursten.eithondocs;
+package net.eithon.plugin.eithondocs;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,41 +9,41 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import net.eithon.library.extensions.EithonPlugin;
+import net.eithon.library.textwrap.ChatPage;
+import net.eithon.library.textwrap.Paginator;
+
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import se.fredsfursten.plugintools.PluginConfig;
-import se.fredsfursten.textwrap.ChatPage;
-import se.fredsfursten.textwrap.Paginator;
-
 class Doc {
-	private ArrayList<ChatPage> chatPages = null;
-	private Stack<String> colorStack = null;
-	private boolean isBold = false;
-	private boolean isStrikeThrough = false;
-	private boolean isUnderline = false;
-	private boolean isItalic = false;
-	private boolean isMagic = false;
-	private File file;
+	private ArrayList<ChatPage> _chatPages = null;
+	private Stack<String> _colorStack = null;
+	private boolean _isBold = false;
+	private boolean _isStrikeThrough = false;
+	private boolean _isUnderline = false;
+	private boolean _isItalic = false;
+	private boolean _isMagic = false;
+	private File _file;
 	private static int chatBoxWidth = 320;
-	private static JavaPlugin _plugin;
+	private static EithonPlugin eithonPlugin;
 
-	public static void initialize(JavaPlugin plugin) {
-		_plugin = plugin;
-		chatBoxWidth = PluginConfig.get(_plugin).getInt("ChatBoxWidth", 320);
+	public static void initialize(EithonPlugin plugin) {
+		eithonPlugin = plugin;
+		chatBoxWidth = eithonPlugin.getConfiguration().getInt("ChatBoxWidth", 320);
 	}
 	
 	public Doc(File file) {
-		this.file = file;
+		this._file = file;
 		reloadRules();
 	}
 	public int getNumberOfPages(){
-		return this.chatPages.size();
+		return this._chatPages.size();
 	}
 
 	public String[] getPage(int pageNumber){
 		if ((pageNumber < 1) || (pageNumber > getNumberOfPages())) return null;
-		return this.chatPages.get(pageNumber-1).getLines();
+		return this._chatPages.get(pageNumber-1).getLines();
 	}
 
 	public void reloadRules() {
@@ -54,15 +54,15 @@ class Doc {
 		String rules = "";
 		boolean firstLine = true;
 		try {
-			FileInputStream fis = new FileInputStream(this.file);
+			FileInputStream fis = new FileInputStream(this._file);
 
 			//Construct BufferedReader from InputStreamReader
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
 			String line = null;
-			this.colorStack = new Stack<String>();
+			this._colorStack = new Stack<String>();
 			String code = convertToColorCode("grey");
-			this.colorStack.push(code);
+			this._colorStack.push(code);
 			while ((line = br.readLine()) != null) {
 				String parsedLine = parseLine(line, firstLine);
 				if (firstLine) firstLine = false;
@@ -73,15 +73,15 @@ class Doc {
 		} catch (IOException e) {
 			if (firstLine) firstLine = false;
 			else rules += "\n";
-			rules += String.format("Failed to read the rules from \"%s\".", this.file.toString());
+			rules += String.format("Failed to read the rules from \"%s\".", this._file.toString());
 		}
 		
-		this.chatPages = new ArrayList<ChatPage>();
+		this._chatPages = new ArrayList<ChatPage>();
 		ChatPage chatPage = null;
 		int i = 1;
 		do {
 			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), chatBoxWidth, 9);
-			this.chatPages.add(chatPage);
+			this._chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());
 	}
@@ -97,31 +97,31 @@ class Doc {
 			{
 				String color = token.substring(6);
 				String code = convertToColorCode(color);
-				this.colorStack.push(code);
+				this._colorStack.push(code);
 			} else if (token.equalsIgnoreCase("/color")) {
-				if (this.colorStack.size() > 1) {
-					this.colorStack.pop();
+				if (this._colorStack.size() > 1) {
+					this._colorStack.pop();
 				}
 			} else if (token.equalsIgnoreCase("b")) {
-				this.isBold = true;
+				this._isBold = true;
 			} else if (token.equalsIgnoreCase("s")) {
-				this.isStrikeThrough = true;
+				this._isStrikeThrough = true;
 			} else if (token.equalsIgnoreCase("u")) {
-				this.isUnderline = true;
+				this._isUnderline = true;
 			} else if (token.equalsIgnoreCase("i")) {
-				this.isItalic = true;
+				this._isItalic = true;
 			} else if (token.equalsIgnoreCase("m")) {
-				this.isMagic = true;
+				this._isMagic = true;
 			} else if (token.equalsIgnoreCase("/b")) {
-				this.isBold = false;
+				this._isBold = false;
 			} else if (token.equalsIgnoreCase("/s")) {
-				this.isStrikeThrough = false;
+				this._isStrikeThrough = false;
 			} else if (token.equalsIgnoreCase("/u")) {
-				this.isUnderline = false;
+				this._isUnderline = false;
 			} else if (token.equalsIgnoreCase("/i")) {
-				this.isItalic = false;
+				this._isItalic = false;
 			} else if (token.equalsIgnoreCase("/m")) {
-				this.isMagic = false;
+				this._isMagic = false;
 			} else {
 				isCode = false;
 			}
@@ -135,12 +135,12 @@ class Doc {
 	}
 
 	private String activeCodes() {
-		String activeCodes = this.colorStack.peek();
-		if (this.isBold) activeCodes += ChatColor.BOLD;
-		if (this.isStrikeThrough) activeCodes += ChatColor.STRIKETHROUGH;
-		if (this.isUnderline) activeCodes += ChatColor.UNDERLINE;
-		if (this.isItalic) activeCodes += ChatColor.ITALIC;
-		if (this.isMagic) activeCodes += ChatColor.MAGIC;
+		String activeCodes = this._colorStack.peek();
+		if (this._isBold) activeCodes += ChatColor.BOLD;
+		if (this._isStrikeThrough) activeCodes += ChatColor.STRIKETHROUGH;
+		if (this._isUnderline) activeCodes += ChatColor.UNDERLINE;
+		if (this._isItalic) activeCodes += ChatColor.ITALIC;
+		if (this._isMagic) activeCodes += ChatColor.MAGIC;
 		return activeCodes;
 	}
 
