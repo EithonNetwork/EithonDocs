@@ -6,7 +6,9 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
-### 1.0 (2015-04-18)
+### 1.0 (2015-04-19)
 
-* First proper EithonRelease
+* NEW: First proper EithonRelease
+* NEW: Now by default goes to the next page if the same command is issued again.
+
 

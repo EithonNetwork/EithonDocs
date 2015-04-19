@@ -10,13 +10,14 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 import net.eithon.library.extensions.EithonPlugin;
+import net.eithon.library.plugin.Configuration;
 import net.eithon.library.textwrap.ChatPage;
 import net.eithon.library.textwrap.Paginator;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-class Doc {
+class PagedDocument {
 	private ArrayList<ChatPage> _chatPages = null;
 	private Stack<String> _colorStack = null;
 	private boolean _isBold = false;
@@ -25,18 +26,13 @@ class Doc {
 	private boolean _isItalic = false;
 	private boolean _isMagic = false;
 	private File _file;
-	private static int chatBoxWidth = 320;
-	private static EithonPlugin eithonPlugin;
+	private int _widthInPixels = 320;
 
-	public static void initialize(EithonPlugin plugin) {
-		eithonPlugin = plugin;
-		chatBoxWidth = eithonPlugin.getConfiguration().getInt("ChatBoxWidth", 320);
-	}
-	
-	public Doc(File file) {
+	public PagedDocument(File file, int widthInPixels) {
 		this._file = file;
 		reloadRules();
 	}
+
 	public int getNumberOfPages(){
 		return this._chatPages.size();
 	}
@@ -73,14 +69,14 @@ class Doc {
 		} catch (IOException e) {
 			if (firstLine) firstLine = false;
 			else rules += "\n";
-			rules += String.format("Failed to read the rules from \"%s\".", this._file.toString());
+			rules += String.format("Failed to read the documentation from \"%s\".", this._file.toString());
 		}
 		
 		this._chatPages = new ArrayList<ChatPage>();
 		ChatPage chatPage = null;
 		int i = 1;
 		do {
-			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), chatBoxWidth, 9);
+			chatPage = Paginator.paginate(rules, i, "", Character.toString(ChatColor.COLOR_CHAR), this._widthInPixels, 9);
 			this._chatPages.add(chatPage);
 			i++;
 		} while (i <= chatPage.getTotalPages());

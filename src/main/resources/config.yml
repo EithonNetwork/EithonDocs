@@ -6,4 +6,4 @@ PageOfMessage: Page %d of %d
 DoDebugPrint: 0
 #
 #
-ChatBoxWidth: 320
+ChatBoxWidthInPixels: 320
