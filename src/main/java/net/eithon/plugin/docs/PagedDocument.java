@@ -9,13 +9,10 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import net.eithon.library.extensions.EithonPlugin;
-import net.eithon.library.plugin.Configuration;
 import net.eithon.library.textwrap.ChatPage;
 import net.eithon.library.textwrap.Paginator;
 
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
 
 class PagedDocument {
 	private ArrayList<ChatPage> _chatPages = null;

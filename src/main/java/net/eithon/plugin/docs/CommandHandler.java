@@ -6,20 +6,21 @@ import java.util.HashMap;
 import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
-import net.eithon.library.plugin.Configuration;
-import net.eithon.library.plugin.PluginMisc;
+import net.eithon.library.plugin.CommandParser;
 import net.eithon.library.plugin.ConfigurableMessage;
+import net.eithon.library.plugin.Configuration;
+import net.eithon.library.plugin.ICommandHandler;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandHandler {
+public class CommandHandler implements ICommandHandler {
 	private ConfigurableMessage _pageOfMessage;
 	private EithonPlugin _eithonPlugin;
 	private HashMap<String, PagedDocument> _docs;
 	private int _chatBoxWidth;
 	private String _lastReadCommand;
-	private int _currentPageNumber;
+	private int _nextPageNumber;
 
 	public CommandHandler(EithonPlugin plugin){
 		this._eithonPlugin = plugin;
@@ -28,30 +29,38 @@ public class CommandHandler {
 		this._pageOfMessage = this._eithonPlugin.getConfigurableMessage("PageOfMessage", 2, "Page %d of %d");
 		this._docs = new HashMap<String, PagedDocument>();
 		this._lastReadCommand = null;
-		this._currentPageNumber = 1;
+		this._nextPageNumber = 1;
 	}
 
-	boolean onCommand(CommandSender sender, String[] args) {
-		if (!PluginMisc.isPlayerOrWarn(sender)) return false;
-		Player player = (Player) sender;
-		EithonPlayer eithonPlayer = new EithonPlayer(player);
-		if (args.length < 1) {
-			showCommandSyntax(player);
-			return true;
-		}
+	public boolean onCommand(CommandParser commandParser) {
+		EithonPlayer eithonPlayer = commandParser.getEithonPlayerOrInformSender();
+		if (eithonPlayer == null) return true;
 
-		String command = args[0].toLowerCase();
+		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
+
+		String command = commandParser.getArgumentStringAsLowercase(0);
+
 		if (command.equals("reload")) {
-			reloadCommand(eithonPlayer, args);
+			reloadCommand(eithonPlayer);
 		} else {
-			int page = parsePageNumber(args, 1, command);
-			showPageCommand(eithonPlayer, command, page);
+			int defaultPageNumber = updateCurrentPageNumber(command);
+			int pageNumber = commandParser.getArgumentInteger(1, defaultPageNumber);
+			this._nextPageNumber = pageNumber+1;
+			showPageCommand(eithonPlayer, command, pageNumber);
 		}
 		return true;
 	}
 
-	private void reloadCommand(EithonPlayer eithonPlayer, String[] args) {
-		if (!eithonPlayer.hasPermissionOrWarn("edocs.reload")) return;
+	private int updateCurrentPageNumber(String command) {
+		if (!command.equalsIgnoreCase(this._lastReadCommand)) {
+			this._lastReadCommand = command;
+			this._nextPageNumber = 1;
+		}
+		return this._nextPageNumber;
+	}
+
+	private void reloadCommand(EithonPlayer eithonPlayer) {
+		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.reload")) return;
 		for (PagedDocument doc : this._docs.values()) {
 			doc.reloadRules();
 		}
@@ -59,43 +68,26 @@ public class CommandHandler {
 	}
 
 	private void showPageCommand(EithonPlayer eithonPlayer, String fileName, int page) {
-		if (!eithonPlayer.hasPermissionOrWarn("edocs.read")) return;
-		File file = new File(this._eithonPlugin.getJavaPlugin().getDataFolder(),fileName + ".txt");
+		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.read")) return;
+		File file = new File(this._eithonPlugin.getDataFolder(),fileName + ".txt");
 		if (!file.exists()) {
-			showCommandSyntax(eithonPlayer);
+			showCommandSyntax(eithonPlayer.getPlayer(), null);
 			return;
 		}
 		showFile(eithonPlayer, fileName, file, page);
 	}
 
-	private int parsePageNumber(String[] args, int index, String fileName) {
-		if (!fileName.equalsIgnoreCase(this._lastReadCommand)) {
-			this._lastReadCommand = fileName;
-			this._currentPageNumber = 1;
-		}
-		
-		int page = this._currentPageNumber;
-		if (args.length > index) {
-			try { page = Integer.parseInt(args[index]); } catch (Exception ex) {}
-		}
-		return page;
-	}
-	
-	private void showCommandSyntax(EithonPlayer eithonPlayer) {
-		showCommandSyntax(eithonPlayer.getPlayer());
-	}
-
-	private void showCommandSyntax(Player player) {
-		File folder = this._eithonPlugin.getJavaPlugin().getDataFolder();
+	public void showCommandSyntax(CommandSender sender, String command) {
+		File folder = this._eithonPlugin.getDataFolder();
 		String[] nameArray = FileMisc.getFileNames(folder, ".txt");
 		String names = String.join("|", nameArray);
-		player.sendMessage(String.format("/edocs (%s) [<page>]", names));
+		sender.sendMessage(String.format("/edocs reload|(%s) [<page>]", names));
 	}
 
 	void showFile(EithonPlayer eithonPlayer, String command, File file, int page)
 	{
 		if (!file.exists()) {
-			showCommandSyntax(eithonPlayer);
+			showCommandSyntax(eithonPlayer.getPlayer(), null);
 			return;
 		}
 
