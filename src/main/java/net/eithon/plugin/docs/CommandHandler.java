@@ -30,16 +30,15 @@ public class CommandHandler implements ICommandHandler {
 	public boolean onCommand(CommandParser commandParser) {
 		EithonPlayer eithonPlayer = commandParser.getEithonPlayerOrInformSender();
 		if (eithonPlayer == null) return true;
-
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
 
-		String command = commandParser.getArgumentStringAsLowercase(0);
+		String command = commandParser.getArgumentCommand();
 
 		if (command.equals("reload")) {
 			reloadCommand(eithonPlayer);
 		} else {
 			int defaultPageNumber = updateCurrentPageNumber(command);
-			int pageNumber = commandParser.getArgumentInteger(1, defaultPageNumber);
+			int pageNumber = commandParser.getArgumentInteger(defaultPageNumber);
 			this._nextPageNumber = pageNumber+1;
 			showPageCommand(eithonPlayer, command, pageNumber);
 		}
