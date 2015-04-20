@@ -1,9 +1,13 @@
 #
-# PageOfMessage has 2 parameters: <current page> (%d), <total pages> (%d)
-PageOfMessage: Page %d of %d
-#
 #
 DoDebugPrint: 0
 #
 #
 ChatBoxWidthInPixels: 320
+
+messages:
+
+  #
+  # PageOfMessage has 2 parameters: <current page> (%d), <total pages> (%d)
+  PageOf: Page %d of %d
+

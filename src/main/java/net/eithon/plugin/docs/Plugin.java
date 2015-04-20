@@ -7,6 +7,7 @@ public final class Plugin extends EithonPlugin {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		Config.load(this);
 		super.activate(new CommandHandler(this), null);
 	}
 

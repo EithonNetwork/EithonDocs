@@ -15,18 +15,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandHandler implements ICommandHandler {
-	private ConfigurableMessage _pageOfMessage;
 	private EithonPlugin _eithonPlugin;
 	private HashMap<String, PagedDocument> _docs;
-	private int _chatBoxWidth;
 	private String _lastReadCommand;
 	private int _nextPageNumber;
 
 	public CommandHandler(EithonPlugin plugin){
 		this._eithonPlugin = plugin;
-		Configuration configuration = this._eithonPlugin.getConfiguration();
-		this._chatBoxWidth = configuration.getInt("ChatBoxWidthInPixels", 320);
-		this._pageOfMessage = this._eithonPlugin.getConfigurableMessage("PageOfMessage", 2, "Page %d of %d");
 		this._docs = new HashMap<String, PagedDocument>();
 		this._lastReadCommand = null;
 		this._nextPageNumber = 1;
@@ -94,14 +89,14 @@ public class CommandHandler implements ICommandHandler {
 		Player player = eithonPlayer.getPlayer();
 		PagedDocument doc = this._docs.get(command);
 		if (doc == null) {
-			doc = new PagedDocument(file, this._chatBoxWidth);
+			doc = new PagedDocument(file, Config.V.chatBoxWidth);
 			this._docs.put(command, doc);
 		}
 
 		int pageCount = doc.getNumberOfPages();
 		if (page > pageCount) page = pageCount;
 		String[] pageLines = doc.getPage(page);
-		this._pageOfMessage.sendMessage(player, page, pageCount);
+		Config.M.pageOf.sendMessage(player, page, pageCount);
 		player.sendMessage(pageLines);
 	}
 }
