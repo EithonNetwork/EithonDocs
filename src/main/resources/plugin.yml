@@ -1,13 +1,13 @@
 name: EithonDocs
 main: net.eithon.plugin.docs.Plugin
-version: 1.0
+version: 1.2
 author: vanbrayne
 description: A Minecraft plugin for rules, etc
 depend: [EithonLibrary]
 commands:
   edocs:
     description: Documentation
-    usage: /edocs reload | <file name>
+    usage: /edocs reload | next | <file name>
     permission-message: You don't have <permission>
 permissions:
   edocs.*:
@@ -15,8 +15,12 @@ permissions:
     default: op
     edocs.read: true
     edocs.reload: true
-  edocs.rules:
-    description: Access to /edocs rules command
+    edocs.next: true
+  edocs.reload:
+    description: Access to /edocs reload command
+    default: op
+  edocs.next:
+    description: Access to /edocs next command
     default: op
   edocs.read:
     description: Can read documents

@@ -1,9 +1,16 @@
 #
 #
 DoDebugPrint: 0
+
 #
 #
 ChatBoxWidthInPixels: 320
+
+#
+# 0 = display message below
+# 1 = display message above
+#
+DisplayPageOfMessageAbove: 0
 
 messages:
 
