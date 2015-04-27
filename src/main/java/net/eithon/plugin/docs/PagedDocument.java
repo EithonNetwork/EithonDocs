@@ -13,6 +13,7 @@ import net.eithon.library.textwrap.ChatPage;
 import net.eithon.library.textwrap.Paginator;
 
 import org.bukkit.ChatColor;
+import org.hamcrest.core.IsInstanceOf;
 
 class PagedDocument {
 	private ArrayList<ChatPage> _chatPages = null;
@@ -42,7 +43,7 @@ class PagedDocument {
 	public void reloadRules() {
 		parseFile();
 	}
-	
+
 	private void parseFile() {
 		String rules = "";
 		boolean firstLine = true;
@@ -68,7 +69,7 @@ class PagedDocument {
 			else rules += "\n";
 			rules += String.format("Failed to read the documentation from \"%s\".", this._file.toString());
 		}
-		
+
 		this._chatPages = new ArrayList<ChatPage>();
 		ChatPage chatPage = null;
 		int i = 1;
@@ -80,43 +81,56 @@ class PagedDocument {
 	}
 
 	private String parseLine(String line, boolean firstLine) {
-		StringTokenizer st = new StringTokenizer(line, "[]");
+		StringTokenizer st = new StringTokenizer(line, "[]", true);
 		String newLine = "";
+		boolean isCode = false;
 		boolean firstToken = true;
 		while (st.hasMoreElements()) {
 			String token = st.nextToken();
-			boolean isCode = true;
-			if (token.startsWith("color="))
-			{
-				String color = token.substring(6);
-				String code = convertToColorCode(color);
-				this._colorStack.push(code);
-			} else if (token.equalsIgnoreCase("/color")) {
-				if (this._colorStack.size() > 1) {
-					this._colorStack.pop();
+			if (token.equalsIgnoreCase("[")) {
+				isCode = true;
+				continue;
+			} else if (token.equalsIgnoreCase("]")) {
+				if (isCode) {
+					isCode = false;
+					continue;
 				}
-			} else if (token.equalsIgnoreCase("b")) {
-				this._isBold = true;
-			} else if (token.equalsIgnoreCase("s")) {
-				this._isStrikeThrough = true;
-			} else if (token.equalsIgnoreCase("u")) {
-				this._isUnderline = true;
-			} else if (token.equalsIgnoreCase("i")) {
-				this._isItalic = true;
-			} else if (token.equalsIgnoreCase("m")) {
-				this._isMagic = true;
-			} else if (token.equalsIgnoreCase("/b")) {
-				this._isBold = false;
-			} else if (token.equalsIgnoreCase("/s")) {
-				this._isStrikeThrough = false;
-			} else if (token.equalsIgnoreCase("/u")) {
-				this._isUnderline = false;
-			} else if (token.equalsIgnoreCase("/i")) {
-				this._isItalic = false;
-			} else if (token.equalsIgnoreCase("/m")) {
-				this._isMagic = false;
-			} else {
-				isCode = false;
+			}
+
+			if (isCode) {
+				if (token.startsWith("color="))
+				{
+					String color = token.substring(6);
+					String code = convertToColorCode(color);
+					this._colorStack.push(code);
+				} else if (token.equalsIgnoreCase("/color")) {
+					if (this._colorStack.size() > 1) {
+						this._colorStack.pop();
+					}
+				} else if (token.equalsIgnoreCase("b")) {
+					this._isBold = true;
+				} else if (token.equalsIgnoreCase("s")) {
+					this._isStrikeThrough = true;
+				} else if (token.equalsIgnoreCase("u")) {
+					this._isUnderline = true;
+				} else if (token.equalsIgnoreCase("i")) {
+					this._isItalic = true;
+				} else if (token.equalsIgnoreCase("m")) {
+					this._isMagic = true;
+				} else if (token.equalsIgnoreCase("/b")) {
+					this._isBold = false;
+				} else if (token.equalsIgnoreCase("/s")) {
+					this._isStrikeThrough = false;
+				} else if (token.equalsIgnoreCase("/u")) {
+					this._isUnderline = false;
+				} else if (token.equalsIgnoreCase("/i")) {
+					this._isItalic = false;
+				} else if (token.equalsIgnoreCase("/m")) {
+					this._isMagic = false;
+				} else {
+					isCode = false;
+					token = "[" + token;
+				}
 			}
 
 			if (firstLine || firstToken || isCode) newLine += activeCodes();
@@ -142,6 +156,10 @@ class PagedDocument {
 		if (color.equalsIgnoreCase("black"))
 		{
 			result = ChatColor.BLACK + "";
+		}
+		else if (color.equalsIgnoreCase("yellow"))
+		{
+			result = ChatColor.YELLOW + "";
 		}
 		else if (color.equalsIgnoreCase("blue"))
 		{
