@@ -31,8 +31,8 @@ public class CommandHandler implements ICommandHandler {
 		EithonPlayer eithonPlayer = commandParser.getEithonPlayerOrInformSender();
 		if (eithonPlayer == null) return true;
 		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,2)) return true;
-		
-		String command = commandParser.getArgumentStringAsLowercase();
+
+		String command = commandParser.getArgumentCommand();
 
 		if (command.equals("reload")) {
 			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
