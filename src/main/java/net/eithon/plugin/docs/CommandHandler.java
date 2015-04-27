@@ -30,16 +30,19 @@ public class CommandHandler implements ICommandHandler {
 	public boolean onCommand(CommandParser commandParser) {
 		EithonPlayer eithonPlayer = commandParser.getEithonPlayerOrInformSender();
 		if (eithonPlayer == null) return true;
-
-		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
-
-		String command = commandParser.getArgumentStringAsLowercase(0);
+		if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,2)) return true;
+		
+		String command = commandParser.getArgumentStringAsLowercase();
 
 		if (command.equals("reload")) {
+			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
 			reloadCommand(eithonPlayer);
+		} else if (command.equals("next")) {
+			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
+			showPageCommand(eithonPlayer, this._lastReadCommand, this._nextPageNumber++);
 		} else {
 			int defaultPageNumber = updateCurrentPageNumber(command);
-			int pageNumber = commandParser.getArgumentInteger(1, defaultPageNumber);
+			int pageNumber = commandParser.getArgumentInteger(defaultPageNumber);
 			this._nextPageNumber = pageNumber+1;
 			showPageCommand(eithonPlayer, command, pageNumber);
 		}
@@ -76,7 +79,7 @@ public class CommandHandler implements ICommandHandler {
 		File folder = this._eithonPlugin.getDataFolder();
 		String[] nameArray = FileMisc.getFileNames(folder, ".txt");
 		String names = String.join("|", nameArray);
-		sender.sendMessage(String.format("/edocs reload|(%s) [<page>]", names));
+		sender.sendMessage(String.format("/edocs reload | next | (%s) [<page>]", names));
 	}
 
 	void showFile(EithonPlayer eithonPlayer, String command, File file, int page)
@@ -94,7 +97,7 @@ public class CommandHandler implements ICommandHandler {
 		}
 
 		int pageCount = doc.getNumberOfPages();
-		if (page > pageCount) page = pageCount;
+		if (page > pageCount) page = 1;
 		String[] pageLines = doc.getPage(page);
 		Config.M.pageOf.sendMessage(player, page, pageCount);
 		player.sendMessage(pageLines);
