@@ -97,7 +97,10 @@ public class CommandHandler implements ICommandHandler {
 		}
 
 		int pageCount = doc.getNumberOfPages();
-		if (page > pageCount) page = 1;
+		if (page > pageCount) {
+			page = 1;
+			this._nextPageNumber = page+1;
+		}
 		String[] pageLines = doc.getPage(page);
 		Config.M.pageOf.sendMessage(player, page, pageCount);
 		player.sendMessage(pageLines);
