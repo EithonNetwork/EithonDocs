@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.0 (2015-04-28)
+
+* NEW: Complete rewrite of the mark up parsing and the pagination
+
 ### 1.2 (2015-04-27)
 
 * NEW: Added configuration for "page i of n" message to be displayed above or below text.
