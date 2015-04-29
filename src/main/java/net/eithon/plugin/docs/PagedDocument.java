@@ -27,6 +27,6 @@ class PagedDocument {
 	public void reloadRules() {
 		SimpleMarkUp parsedFile = new SimpleMarkUp(this._file);
 		String[] allLines = parsedFile.getParsedLines();
-		this._pages = Paginator.paginate(allLines, this._widthInPixels);
+		this._pages = Paginator.paginate(allLines, this._widthInPixels, 9);
 	}
 }
