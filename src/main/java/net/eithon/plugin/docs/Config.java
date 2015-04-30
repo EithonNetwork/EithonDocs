@@ -15,9 +15,12 @@ public class Config {
 	}
 	public static class V {
 		public static int chatBoxWidth;
+		public static boolean displayPageOfMessageAbove;
 
 		static void load(Configuration config) {
 			chatBoxWidth = config.getInt("ChatBoxWidthInPixels", 320);
+			int above = config.getInt("DisplayPageOfMessageAbove", 1);
+			displayPageOfMessageAbove = above > 0;
 		}
 	}
 	public static class C {
