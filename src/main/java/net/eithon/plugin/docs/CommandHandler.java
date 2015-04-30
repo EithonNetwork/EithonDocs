@@ -7,8 +7,6 @@ import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
 import net.eithon.library.plugin.CommandParser;
-import net.eithon.library.plugin.ConfigurableMessage;
-import net.eithon.library.plugin.Configuration;
 import net.eithon.library.plugin.ICommandHandler;
 
 import org.bukkit.command.CommandSender;
@@ -90,6 +88,7 @@ public class CommandHandler implements ICommandHandler {
 		}
 
 		Player player = eithonPlayer.getPlayer();
+
 		PagedDocument doc = this._docs.get(command);
 		if (doc == null) {
 			int linesOnPage = Config.V.chatBoxHeightInLines;
@@ -104,14 +103,22 @@ public class CommandHandler implements ICommandHandler {
 			page = 1;
 			this._nextPageNumber = page+1;
 		}
+		String title = firstCharacterUpperCase(command);
+		
 		String[] pageLines = doc.getPage(page);
 		HashMap<String,String> namedArguments = new HashMap<String, String>();
-		namedArguments.put("TITLE", command);
+		namedArguments.put("TITLE", title);
 		namedArguments.put("CURRENT_PAGE", Integer.toString(page));
 		namedArguments.put("TOTAL_PAGES", Integer.toString(totalPages));
-		
-		if (Config.M.pageHeader.hasContent()) Config.M.pageHeader.sendMessage(player, page, namedArguments);
+
+		if (Config.M.pageHeader.hasContent()) Config.M.pageHeader.sendMessage(player, namedArguments);
 		player.sendMessage(pageLines);
-		if (Config.M.pageFooter.hasContent()) Config.M.pageFooter.sendMessage(player, page, namedArguments);
+		if (Config.M.pageFooter.hasContent()) Config.M.pageFooter.sendMessage(player, namedArguments);
+	}
+
+	private String firstCharacterUpperCase(String command) {
+		char[] charArray = command.toCharArray();
+		charArray[0] = Character.toUpperCase(charArray[0]);
+		return new String(charArray);
 	}
 }

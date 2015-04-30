@@ -10,7 +10,7 @@ A documentation plugin for Minecraft.
 
 * NEW: Configurable height
 * NEW: Header and Footer is optional and has named parameters.
-* NEW: Tab at the start of a line means that line will be centered.
+* NEW: Tab in a line means that line will be centered.
 
 ### 2.0 (2015-04-28)
 
