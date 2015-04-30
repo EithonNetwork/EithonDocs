@@ -10,11 +10,13 @@ class PagedDocument {
 	private Page[] _pages = null;
 	private File _file;
 	private int _widthInPixels = 320;
+	private int _heightInLines = 10;
 
-	public PagedDocument(File file, int widthInPixels) {
+	public PagedDocument(File file, int widthInPixels, int heightInLines) {
 		this._file = file;
 		this._widthInPixels = widthInPixels;
-		reloadRules();
+		this._heightInLines = heightInLines;
+		reload();
 	}
 
 	public int getNumberOfPages(){ return this._pages.length; }
@@ -24,9 +26,9 @@ class PagedDocument {
 		return this._pages[pageNumber-1].getLines();
 	}
 
-	public void reloadRules() {
+	public void reload() {
 		SimpleMarkUp parsedFile = new SimpleMarkUp(this._file);
 		String[] allLines = parsedFile.getParsedLines();
-		this._pages = Paginator.paginate(allLines, this._widthInPixels, 9);
+		this._pages = Paginator.paginate(allLines, this._widthInPixels, this._heightInLines);
 	}
 }

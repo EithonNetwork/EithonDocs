@@ -14,13 +14,12 @@ public class Config {
 
 	}
 	public static class V {
-		public static int chatBoxWidth;
-		public static boolean displayPageOfMessageAbove;
+		public static int chatBoxWidthInPixels;
+		public static int chatBoxHeightInLines;
 
 		static void load(Configuration config) {
-			chatBoxWidth = config.getInt("ChatBoxWidthInPixels", 320);
-			int above = config.getInt("DisplayPageOfMessageAbove", 1);
-			displayPageOfMessageAbove = above > 0;
+			chatBoxWidthInPixels = config.getInt("ChatBoxWidthInPixels", 320);
+			chatBoxHeightInLines = config.getInt("ChatBoxHeightInLines", 10);
 		}
 	}
 	public static class C {
@@ -30,11 +29,15 @@ public class Config {
 
 	}
 	public static class M {
-		public static ConfigurableMessage pageOf;
+		public static ConfigurableMessage pageHeader;
+		public static ConfigurableMessage pageFooter;
 
 		static void load(Configuration config) {
-			pageOf = config.getConfigurableMessage("messages.PageOf", 2,
-					"Page %d of %d");
+			String[] parameterNames = {"TITLE", "CURRENT_PAGE", "TOTAL_PAGES"};
+			pageHeader = config.getConfigurableMessage("messages.PageHeader", 0,
+					"-----[%TITLE%]-----", parameterNames);
+			pageFooter = config.getConfigurableMessage("messages.PageFooter", 0,
+					"Page %CURRENT_PAGE% of %TOTAL_PAGES%", parameterNames);
 		}		
 	}
 

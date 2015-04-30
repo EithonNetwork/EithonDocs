@@ -7,14 +7,15 @@ DoDebugPrint: 0
 ChatBoxWidthInPixels: 320
 
 #
-# 0 = display message below
-# 1 = display message above
-#
-DisplayPageOfMessageAbove: 0
+# Number of lines to be displayed, including PageHeader and PageFooter
+ChatBoxHeightInLines: 10
 
 messages:
-
   #
-  # PageOfMessage has 2 parameters: <current page> (%d), <total pages> (%d)
-  PageOf: Page %d of %d
-
+  # The following two parameters have the following possible parameters
+  # %TITLE%: The name of the document that is displayed, with uppercase first character.
+  # Example: The document "help.txt" will have %TITLE% = "Help"
+  # %CURRENT_PAGE%: The current page. 1 for the first page, 2 for the second, etc.
+  # %TOTAL_PAGES%: The total number of pages, i.e. when we are at the last page, the %CURRENT_PAGE% will be the same as %TOTAL_PAGES%
+  PageHeader: -----[%TITLE%]-----
+  PageFooter: Page %CURRENT_PAGE% of %TOTAL_PAGES%
