@@ -7,8 +7,6 @@ import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
 import net.eithon.library.plugin.CommandParser;
-import net.eithon.library.plugin.ConfigurableMessage;
-import net.eithon.library.plugin.Configuration;
 import net.eithon.library.plugin.ICommandHandler;
 
 import org.bukkit.command.CommandSender;
@@ -60,7 +58,7 @@ public class CommandHandler implements ICommandHandler {
 	private void reloadCommand(EithonPlayer eithonPlayer) {
 		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.reload")) return;
 		for (PagedDocument doc : this._docs.values()) {
-			doc.reloadRules();
+			doc.reload();
 		}
 		this._lastReadCommand = null;
 	}
@@ -90,20 +88,37 @@ public class CommandHandler implements ICommandHandler {
 		}
 
 		Player player = eithonPlayer.getPlayer();
+
 		PagedDocument doc = this._docs.get(command);
 		if (doc == null) {
-			doc = new PagedDocument(file, Config.V.chatBoxWidth);
+			int linesOnPage = Config.V.chatBoxHeightInLines;
+			if (Config.M.pageFooter.hasContent()) linesOnPage--;
+			if (Config.M.pageHeader.hasContent()) linesOnPage--;
+			doc = new PagedDocument(file, Config.V.chatBoxWidthInPixels, linesOnPage);
 			this._docs.put(command, doc);
 		}
 
-		int pageCount = doc.getNumberOfPages();
-		if (page > pageCount) {
+		int totalPages = doc.getNumberOfPages();
+		if (page > totalPages) {
 			page = 1;
 			this._nextPageNumber = page+1;
 		}
+		String title = firstCharacterUpperCase(command);
+		
 		String[] pageLines = doc.getPage(page);
-		if (Config.V.displayPageOfMessageAbove) Config.M.pageOf.sendMessage(player, page, pageCount);
+		HashMap<String,String> namedArguments = new HashMap<String, String>();
+		namedArguments.put("TITLE", title);
+		namedArguments.put("CURRENT_PAGE", Integer.toString(page));
+		namedArguments.put("TOTAL_PAGES", Integer.toString(totalPages));
+
+		if (Config.M.pageHeader.hasContent()) Config.M.pageHeader.sendMessage(player, namedArguments);
 		player.sendMessage(pageLines);
-		if (!Config.V.displayPageOfMessageAbove) Config.M.pageOf.sendMessage(player, page, pageCount);
+		if (Config.M.pageFooter.hasContent()) Config.M.pageFooter.sendMessage(player, namedArguments);
+	}
+
+	private String firstCharacterUpperCase(String command) {
+		char[] charArray = command.toCharArray();
+		charArray[0] = Character.toUpperCase(charArray[0]);
+		return new String(charArray);
 	}
 }
