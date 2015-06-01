@@ -1,6 +1,11 @@
 #
+# Debug level
+#	0 = NONE (no debug messages)
+#	1 = MAJOR (only major messages)
+#	2 = MINOR (also minor messages)
+#	3 = VERBOSE (all messages)
 #
-DoDebugPrint: 0
+EithonDebugLevel: 1
 
 #
 #
