@@ -12,7 +12,7 @@ ChatBoxHeightInLines: 10
 
 messages:
   #
-  # The following two parameters have the following possible parameters
+  # The following two messages have the following possible parameters
   # %TITLE%: The name of the document that is displayed, with uppercase first character.
   # Example: The document "help.txt" will have %TITLE% = "Help"
   # %CURRENT_PAGE%: The current page. 1 for the first page, 2 for the second, etc.
