@@ -6,6 +6,12 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.1 (2015-04-30)
+
+* NEW: Configurable height
+* NEW: Header and Footer is optional and has named parameters.
+* NEW: Tab in a line means that line will be centered.
+
 ### 2.0 (2015-04-28)
 
 * NEW: Complete rewrite of the mark up parsing and the pagination

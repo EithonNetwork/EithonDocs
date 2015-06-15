@@ -1,20 +1,40 @@
+## Configuration for EithonLibrary
+eithon:
+  UseMarkUpForMessages: 1
+  UseWrappingForMessages: 1
+  
+  #
+  # Debug level
+  #	0 = NONE (no debug messages)
+  #	1 = MAJOR (only major messages)
+  #	2 = MINOR (also minor messages)
+  #	3 = VERBOSE (all messages)
+  #
+  DebugLevel: 1
+
 #
+# Debug level
+#	0 = NONE (no debug messages)
+#	1 = MAJOR (only major messages)
+#	2 = MINOR (also minor messages)
+#	3 = VERBOSE (all messages)
 #
-DoDebugPrint: 0
+EithonDebugLevel: 1
 
 #
 #
 ChatBoxWidthInPixels: 320
 
 #
-# 0 = display message below
-# 1 = display message above
-#
-DisplayPageOfMessageAbove: 0
+# Number of lines to be displayed, including PageHeader and PageFooter
+ChatBoxHeightInLines: 10
 
 messages:
-
   #
-  # PageOfMessage has 2 parameters: <current page> (%d), <total pages> (%d)
-  PageOf: Page %d of %d
-
+  # The following two messages have the following possible parameters
+  # %TITLE%: The name of the document that is displayed, with uppercase first character.
+  # Example: The document "help.txt" will have %TITLE% = "Help"
+  # %CURRENT_PAGE%: The current page. 1 for the first page, 2 for the second, etc.
+  # %TOTAL_PAGES%: The total number of pages, i.e. when we are at the last page, the %CURRENT_PAGE% will be the same as %TOTAL_PAGES%
+  PageHeader: -----[%TITLE%]-----
+  PageFooter: Page %CURRENT_PAGE% of %TOTAL_PAGES%
