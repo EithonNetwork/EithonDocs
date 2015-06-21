@@ -17,7 +17,7 @@ eithon:
   #  2 = MINOR (also minor messages)
   #  3 = VERBOSE (all messages)
   #
-  EithonDebugLevel: 3
+  DebugLevel: 3
 
 messages:
   #
