@@ -1,26 +1,3 @@
-## Configuration for EithonLibrary
-eithon:
-  UseMarkUpForMessages: 1
-  UseWrappingForMessages: 1
-  
-  #
-  # Debug level
-  #	0 = NONE (no debug messages)
-  #	1 = MAJOR (only major messages)
-  #	2 = MINOR (also minor messages)
-  #	3 = VERBOSE (all messages)
-  #
-  DebugLevel: 1
-
-#
-# Debug level
-#	0 = NONE (no debug messages)
-#	1 = MAJOR (only major messages)
-#	2 = MINOR (also minor messages)
-#	3 = VERBOSE (all messages)
-#
-EithonDebugLevel: 1
-
 #
 #
 ChatBoxWidthInPixels: 320
@@ -29,6 +6,19 @@ ChatBoxWidthInPixels: 320
 # Number of lines to be displayed, including PageHeader and PageFooter
 ChatBoxHeightInLines: 10
 
+eithon:
+  UseMarkUpForMessages: 1
+  UseWrappingForMessages: 1
+  
+  #
+  # Debug level
+  #  0 = NONE (no debug messages)
+  #  1 = MAJOR (only major messages)
+  #  2 = MINOR (also minor messages)
+  #  3 = VERBOSE (all messages)
+  #
+  EithonDebugLevel: 1
+
 messages:
   #
   # The following two messages have the following possible parameters
@@ -36,5 +26,5 @@ messages:
   # Example: The document "help.txt" will have %TITLE% = "Help"
   # %CURRENT_PAGE%: The current page. 1 for the first page, 2 for the second, etc.
   # %TOTAL_PAGES%: The total number of pages, i.e. when we are at the last page, the %CURRENT_PAGE% will be the same as %TOTAL_PAGES%
-  PageHeader: "\t[hl=1][%TITLE%]"
-  PageFooter: Page %CURRENT_PAGE% of %TOTAL_PAGES%
+  PageHeader: '\t[hl=1][ [color=aqua]%TITLE% [/color]]'
+  PageFooter: '\t[hl=1][Page [color=aqua]%CURRENT_PAGE%[/color] of [color=aqua]%TOTAL_PAGES%[/color]]'
