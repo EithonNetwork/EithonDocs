@@ -6,8 +6,9 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
-### 2.1.1 (2015-07-08)
+### 2.2 (2015-07-08)
 
+* CHANGE: Now always shows the first page when the command is entered without a page number
 * BUG: Now shows subcommands if no subcommand was given.
 
 ### 2.1 (2015-04-30)

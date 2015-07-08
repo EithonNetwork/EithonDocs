@@ -15,14 +15,10 @@ import org.bukkit.entity.Player;
 public class CommandHandler implements ICommandHandler {
 	private EithonPlugin _eithonPlugin;
 	private HashMap<String, PagedDocument> _docs;
-	private String _lastReadCommand;
-	private int _nextPageNumber;
 
 	public CommandHandler(EithonPlugin plugin){
 		this._eithonPlugin = plugin;
 		this._docs = new HashMap<String, PagedDocument>();
-		this._lastReadCommand = null;
-		this._nextPageNumber = 1;
 	}
 
 	public boolean onCommand(CommandParser commandParser) {
@@ -35,24 +31,12 @@ public class CommandHandler implements ICommandHandler {
 		if (command.equals("reload")) {
 			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
 			reloadCommand(eithonPlayer);
-		} else if (command.equals("next")) {
-			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
-			showPageCommand(eithonPlayer, this._lastReadCommand, this._nextPageNumber++);
 		} else {
-			int defaultPageNumber = updateCurrentPageNumber(command);
-			int pageNumber = commandParser.getArgumentInteger(defaultPageNumber);
-			this._nextPageNumber = pageNumber+1;
+			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,2)) return true;
+			int pageNumber = commandParser.getArgumentInteger(1);
 			showPageCommand(eithonPlayer, command, pageNumber);
 		}
 		return true;
-	}
-
-	private int updateCurrentPageNumber(String command) {
-		if (!command.equalsIgnoreCase(this._lastReadCommand)) {
-			this._lastReadCommand = command;
-			this._nextPageNumber = 1;
-		}
-		return this._nextPageNumber;
 	}
 
 	private void reloadCommand(EithonPlayer eithonPlayer) {
@@ -60,7 +44,6 @@ public class CommandHandler implements ICommandHandler {
 		for (PagedDocument doc : this._docs.values()) {
 			doc.reload();
 		}
-		this._lastReadCommand = null;
 	}
 
 	private void showPageCommand(EithonPlayer eithonPlayer, String fileName, int page) {
@@ -77,7 +60,7 @@ public class CommandHandler implements ICommandHandler {
 		File folder = this._eithonPlugin.getDataFolder();
 		String[] nameArray = FileMisc.getFileNames(folder, ".txt");
 		String names = String.join("|", nameArray);
-		sender.sendMessage(String.format("/edocs reload | next | (%s) [<page>]", names));
+		sender.sendMessage(String.format("/edocs reload | (%s) [<page>]", names));
 	}
 
 	void showFile(EithonPlayer eithonPlayer, String command, File file, int page)
@@ -101,7 +84,6 @@ public class CommandHandler implements ICommandHandler {
 		int totalPages = doc.getNumberOfPages();
 		if (page > totalPages) {
 			page = 1;
-			this._nextPageNumber = page+1;
 		}
 		String title = firstCharacterUpperCase(command);
 		
