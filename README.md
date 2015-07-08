@@ -8,6 +8,7 @@ A documentation plugin for Minecraft.
 
 ### 2.2 (2015-07-08)
 
+* CHANGE: The documents are now stored in the folder "txt-files"
 * CHANGE: Now always shows the first page when the command is entered without a page number
 * BUG: Now shows subcommands if no subcommand was given.
 

@@ -48,7 +48,7 @@ public class CommandHandler implements ICommandHandler {
 
 	private void showPageCommand(EithonPlayer eithonPlayer, String fileName, int page) {
 		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.read")) return;
-		File file = new File(this._eithonPlugin.getDataFolder(),fileName + ".txt");
+		File file = new File(getDocumentFolder(),fileName + ".txt");
 		if (!file.exists()) {
 			showCommandSyntax(eithonPlayer.getPlayer(), null);
 			return;
@@ -57,8 +57,7 @@ public class CommandHandler implements ICommandHandler {
 	}
 
 	public void showCommandSyntax(CommandSender sender, String command) {
-		File folder = this._eithonPlugin.getDataFolder();
-		String[] nameArray = FileMisc.getFileNames(folder, ".txt");
+		String[] nameArray = FileMisc.getFileNames(getDocumentFolder(), ".txt");
 		String names = String.join("|", nameArray);
 		sender.sendMessage(String.format("/edocs reload | (%s) [<page>]", names));
 	}
@@ -102,5 +101,12 @@ public class CommandHandler implements ICommandHandler {
 		char[] charArray = command.toCharArray();
 		charArray[0] = Character.toUpperCase(charArray[0]);
 		return new String(charArray);
+	}
+	
+	private File getDocumentFolder() {
+		File dataFolder = this._eithonPlugin.getDataFolder();
+		File folder = new File(dataFolder, "txt-files");
+		FileMisc.makeSureDirectoriesExists(folder);
+		return folder;
 	}
 }
