@@ -8,6 +8,7 @@ import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
 import net.eithon.library.plugin.CommandParser;
 import net.eithon.library.plugin.ICommandHandler;
+import net.eithon.library.plugin.Logger.DebugPrintLevel;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,10 +16,12 @@ import org.bukkit.entity.Player;
 public class CommandHandler implements ICommandHandler {
 	private EithonPlugin _eithonPlugin;
 	private HashMap<String, PagedDocument> _docs;
+	private File _textFileFolder;
 
 	public CommandHandler(EithonPlugin plugin){
 		this._eithonPlugin = plugin;
 		this._docs = new HashMap<String, PagedDocument>();
+		this._textFileFolder = getTextFilesFolder();
 	}
 
 	public boolean onCommand(CommandParser commandParser) {
@@ -48,7 +51,7 @@ public class CommandHandler implements ICommandHandler {
 
 	private void showPageCommand(EithonPlayer eithonPlayer, String fileName, int page) {
 		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.read")) return;
-		File file = new File(getDocumentFolder(),fileName + ".txt");
+		File file = new File(this._textFileFolder,fileName + ".txt");
 		if (!file.exists()) {
 			showCommandSyntax(eithonPlayer.getPlayer(), null);
 			return;
@@ -57,8 +60,8 @@ public class CommandHandler implements ICommandHandler {
 	}
 
 	public void showCommandSyntax(CommandSender sender, String command) {
-		String[] nameArray = FileMisc.getFileNames(getDocumentFolder(), ".txt");
-		String names = String.join("|", nameArray);
+		String[] nameArray = FileMisc.getFileNames(this._textFileFolder, ".txt");
+		String names = nameArray == null? "" : String.join("|", nameArray);
 		sender.sendMessage(String.format("/edocs reload | (%s) [<page>]", names));
 	}
 
@@ -103,10 +106,18 @@ public class CommandHandler implements ICommandHandler {
 		return new String(charArray);
 	}
 	
-	private File getDocumentFolder() {
+	private File getTextFilesFolder() {
 		File dataFolder = this._eithonPlugin.getDataFolder();
-		File folder = new File(dataFolder, "txt-files" + File.pathSeparator);
-		FileMisc.makeSureDirectoriesExists(folder);
-		return folder;
+		verbose("getDocumentFolder", "dataFolder = %s", dataFolder.getPath());
+		File txtFolder = new File(dataFolder, "txt-files");
+		verbose("getDocumentFolder", "txtFolder = %s", txtFolder.getPath());
+		FileMisc.makeSureParentDirectoryExists(txtFolder);
+		if (!txtFolder.exists()) txtFolder.mkdir();
+		return txtFolder;
+	}
+	
+	void verbose(String method, String format, Object... args) {
+		String message = String.format(format,  args);
+		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "%s: %s", method, message);
 	}
 }
