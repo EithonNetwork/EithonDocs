@@ -105,7 +105,7 @@ public class CommandHandler implements ICommandHandler {
 	
 	private File getDocumentFolder() {
 		File dataFolder = this._eithonPlugin.getDataFolder();
-		File folder = new File(dataFolder, "txt-files");
+		File folder = new File(dataFolder, "txt-files" + File.pathSeparator);
 		FileMisc.makeSureDirectoriesExists(folder);
 		return folder;
 	}
