@@ -6,6 +6,11 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.2.1 (2015-07-13)
+
+* BUG: Did not create the folder txt-files if it didn't exist already
+* BUG: Did not read files from the folder txt-files.
+
 ### 2.2 (2015-07-08)
 
 * CHANGE: The documents are now stored in the folder "txt-files"
