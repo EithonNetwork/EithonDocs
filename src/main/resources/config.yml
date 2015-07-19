@@ -26,5 +26,5 @@ messages:
   # Example: The document "help.txt" will have %TITLE% = "Help"
   # %CURRENT_PAGE%: The current page. 1 for the first page, 2 for the second, etc.
   # %TOTAL_PAGES%: The total number of pages, i.e. when we are at the last page, the %CURRENT_PAGE% will be the same as %TOTAL_PAGES%
-  PageHeader: "	*[ [color=aqua]%TITLE% [/color]]"
-  PageFooter: ' *[Page [color=aqua]%CURRENT_PAGE%[/color] of [color=aqua]%TOTAL_PAGES%[/color]]'
+  PageHeader: '	[hl=1][ [color=aqua]%TITLE%[/color] ]'
+  PageFooter: '	[hl=1][Page [color=aqua]%CURRENT_PAGE%[/color] of [color=aqua]%TOTAL_PAGES%[/color]]'

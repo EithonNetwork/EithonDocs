@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.3 (2015-07-19)
+
+* NEW: Accepts the word "page" now between the file name and the page number.
+
 ### 2.2.1 (2015-07-13)
 
 * BUG: Did not create the folder txt-files if it didn't exist already

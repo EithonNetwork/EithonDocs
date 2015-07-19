@@ -35,8 +35,15 @@ public class CommandHandler implements ICommandHandler {
 			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
 			reloadCommand(eithonPlayer);
 		} else {
-			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,2)) return true;
-			int pageNumber = commandParser.getArgumentInteger(1);
+			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,3)) return true;
+			int pageNumber = 1;
+			String pageString = commandParser.getArgumentString();
+			if (pageString.equalsIgnoreCase("page")) {
+				pageNumber = commandParser.getArgumentInteger(pageNumber);
+			} else {
+				// Reread the last argument as an integer
+				pageNumber = commandParser.getArgumentInteger(2, pageNumber);				
+			}
 			showPageCommand(eithonPlayer, command, pageNumber);
 		}
 		return true;
@@ -62,7 +69,7 @@ public class CommandHandler implements ICommandHandler {
 	public void showCommandSyntax(CommandSender sender, String command) {
 		String[] nameArray = FileMisc.getFileNames(this._textFileFolder, ".txt");
 		String names = nameArray == null? "" : String.join("|", nameArray);
-		sender.sendMessage(String.format("/edocs reload | (%s) [<page>]", names));
+		sender.sendMessage(String.format("/edocs reload | (%s) [[page] <page>]", names));
 	}
 
 	void showFile(EithonPlayer eithonPlayer, String command, File file, int page)
