@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.3.1 (2015-07-19)
+
+* BUG: Null pointer exception, CommandHandler.java:41
+
 ### 2.3 (2015-07-19)
 
 * NEW: Accepts the word "page" now between the file name and the page number.

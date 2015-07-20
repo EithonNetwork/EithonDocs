@@ -38,7 +38,7 @@ public class CommandHandler implements ICommandHandler {
 			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,3)) return true;
 			int pageNumber = 1;
 			String pageString = commandParser.getArgumentString();
-			if (pageString.equalsIgnoreCase("page")) {
+			if ((pageString != null) && (pageString.equalsIgnoreCase("page"))) {
 				pageNumber = commandParser.getArgumentInteger(pageNumber);
 			} else {
 				// Reread the last argument as an integer
