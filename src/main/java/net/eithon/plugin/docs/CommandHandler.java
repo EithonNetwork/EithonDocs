@@ -38,11 +38,12 @@ public class CommandHandler implements ICommandHandler {
 			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,3)) return true;
 			int pageNumber = 1;
 			String pageString = commandParser.getArgumentString();
+			verbose("onCommand", "pageString: %s", pageString);
 			if ((pageString != null) && (pageString.equalsIgnoreCase("page"))) {
 				pageNumber = commandParser.getArgumentInteger(pageNumber);
 			} else {
 				// Reread the last argument as an integer
-				pageNumber = commandParser.getArgumentInteger(2, pageNumber);				
+				pageNumber = commandParser.getArgumentInteger(2-1, pageNumber);				
 			}
 			showPageCommand(eithonPlayer, command, pageNumber);
 		}
@@ -125,6 +126,6 @@ public class CommandHandler implements ICommandHandler {
 	
 	void verbose(String method, String format, Object... args) {
 		String message = String.format(format,  args);
-		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "%s: %s", method, message);
+		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "CommandHandler.%s: %s", method, message);
 	}
 }
