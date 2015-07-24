@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.3.2 (2015-07-24)
+
+* BUG: "/<command> <page> does no longer work (/<command> page <page> does though)
+
 ### 2.3.1 (2015-07-19)
 
 * BUG: Null pointer exception, CommandHandler.java:41

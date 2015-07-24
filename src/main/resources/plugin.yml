@@ -1,6 +1,6 @@
 name: EithonDocs
 main: net.eithon.plugin.docs.Plugin
-version: 2.3.1
+version: 2.3.2
 author: vanbrayne
 description: A Minecraft plugin for rules, etc
 depend: [EithonLibrary]
