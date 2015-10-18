@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.4 (2015-10-18)
+
+* CHANGE: Refactoring EithonLibrary.
+
 ### 2.3.2 (2015-07-24)
 
 * BUG: "/<command> <page> does no longer work (/<command> page <page> does though)
