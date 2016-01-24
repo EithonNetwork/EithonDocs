@@ -2,100 +2,96 @@ package net.eithon.plugin.docs;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
+import net.eithon.library.command.CommandSyntaxException;
+import net.eithon.library.command.EithonCommand;
+import net.eithon.library.command.EithonCommandUtilities;
+import net.eithon.library.command.ICommandSyntax;
 import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
-import net.eithon.library.plugin.CommandParser;
-import net.eithon.library.plugin.ICommandHandler;
 import net.eithon.library.plugin.Logger.DebugPrintLevel;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandHandler implements ICommandHandler {
+public class CommandHandler {
 	private EithonPlugin _eithonPlugin;
 	private HashMap<String, PagedDocument> _docs;
 	private File _textFileFolder;
+	private ICommandSyntax _commandSyntax;
 
 	public CommandHandler(EithonPlugin plugin){
 		this._eithonPlugin = plugin;
+		this._commandSyntax = null;
 		this._docs = new HashMap<String, PagedDocument>();
 		this._textFileFolder = getTextFilesFolder();
 	}
 
-	public boolean onCommand(CommandParser commandParser) {
-		EithonPlayer eithonPlayer = commandParser.getEithonPlayerOrInformSender();
-		if (eithonPlayer == null) return true;
+	public ICommandSyntax getCommandSyntax() {
+		if (this._commandSyntax != null) return this._commandSyntax;
 
-		String command = commandParser.getArgumentCommand();
-		if (command == null) return false;
+		ICommandSyntax commandSyntax = EithonCommand.createRootCommand("edocs");
+		commandSyntax.setPermissionsAutomatically();
 
-		if (command.equals("reload")) {
-			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,1)) return true;
-			reloadCommand(eithonPlayer);
-		} else {
-			if (!commandParser.hasCorrectNumberOfArgumentsOrShowSyntax(1,3)) return true;
-			int pageNumber = 1;
-			String pageString = commandParser.getArgumentString();
-			verbose("onCommand", "pageString: %s", pageString);
-			if ((pageString != null) && (pageString.equalsIgnoreCase("page"))) {
-				pageNumber = commandParser.getArgumentInteger(pageNumber);
-			} else {
-				// Reread the last argument as an integer
-				pageNumber = commandParser.getArgumentInteger(2-1, pageNumber);				
-			}
-			showPageCommand(eithonPlayer, command, pageNumber);
+		try {
+			commandSyntax.parseCommandSyntax("reload")
+			.setCommandExecutor(ec -> reloadCommand(ec));
+			commandSyntax.parseCommandSyntax("<document-name> <page-number : INTEGER>")
+			.setCommandExecutor(ec -> showPageCommand(ec));
+			commandSyntax.getParameterSyntax("document-name")
+			.setMandatoryValues(ec -> EithonCommandUtilities.getFileNames(this._textFileFolder, ".txt"));
+			commandSyntax.getParameterSyntax("page-number")
+			.setMandatoryValues(ec -> getPageRange(ec));
+		} catch (CommandSyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		return true;
+		this._commandSyntax = commandSyntax;
+		return this._commandSyntax;
 	}
 
-	private void reloadCommand(EithonPlayer eithonPlayer) {
-		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.reload")) return;
+	private List<String> getPageRange(EithonCommand command) {
+		String documentName = command.getArgument("document-name").asString();
+		return EithonCommandUtilities.getRange(1, getNumberOfPages(documentName));
+	}
+
+	private int getNumberOfPages(String documentName) {
+		PagedDocument document = getDocument(documentName);
+		if (document == null) return 1;
+		return document.getNumberOfPages();
+	}
+
+	private void reloadCommand(EithonCommand command) {
 		for (PagedDocument doc : this._docs.values()) {
 			doc.reload();
 		}
 	}
 
-	private void showPageCommand(EithonPlayer eithonPlayer, String fileName, int page) {
+	private void showPageCommand(EithonCommand command) {
+		EithonPlayer eithonPlayer = command.getEithonPlayerOrInformSender();
+		if (eithonPlayer == null) return;
 		if (!eithonPlayer.hasPermissionOrInformPlayer("edocs.read")) return;
-		File file = new File(this._textFileFolder,fileName + ".txt");
-		if (!file.exists()) {
-			showCommandSyntax(eithonPlayer.getPlayer(), null);
-			return;
-		}
-		showFile(eithonPlayer, fileName, file, page);
+		
+		String documentName = command.getArgument("document-name").asString();
+		
+		int page = command.getArgument("page-number").asInteger();
+		showFile(eithonPlayer, documentName, page);
 	}
 
-	public void showCommandSyntax(CommandSender sender, String command) {
-		String[] nameArray = FileMisc.getFileNames(this._textFileFolder, ".txt");
-		String names = nameArray == null? "" : String.join("|", nameArray);
-		sender.sendMessage(String.format("/edocs reload | (%s) [[page] <page>]", names));
-	}
-
-	void showFile(EithonPlayer eithonPlayer, String command, File file, int page)
+	void showFile(EithonPlayer eithonPlayer, String documentName, int page)
 	{
-		if (!file.exists()) {
-			showCommandSyntax(eithonPlayer.getPlayer(), null);
-			return;
-		}
 
 		Player player = eithonPlayer.getPlayer();
 
-		PagedDocument doc = this._docs.get(command);
-		if (doc == null) {
-			int linesOnPage = Config.V.chatBoxHeightInLines;
-			if (Config.M.pageFooter.hasContent()) linesOnPage--;
-			if (Config.M.pageHeader.hasContent()) linesOnPage--;
-			doc = new PagedDocument(file, Config.V.chatBoxWidthInPixels, linesOnPage);
-			this._docs.put(command, doc);
-		}
+		PagedDocument doc = getDocument(documentName);
 
 		int totalPages = doc.getNumberOfPages();
 		if (page > totalPages) {
 			page = 1;
 		}
-		String title = firstCharacterUpperCase(command);
+		String title = firstCharacterUpperCase(documentName);
 		
 		String[] pageLines = doc.getPage(page);
 		HashMap<String,String> namedArguments = new HashMap<String, String>();
@@ -106,6 +102,22 @@ public class CommandHandler implements ICommandHandler {
 		if (Config.M.pageHeader.hasContent()) Config.M.pageHeader.sendMessage(player, namedArguments);
 		player.sendMessage(pageLines);
 		if (Config.M.pageFooter.hasContent()) Config.M.pageFooter.sendMessage(player, namedArguments);
+	}
+
+	private PagedDocument getDocument(String documentName) {
+
+		File file = new File(this._textFileFolder,documentName + ".txt");
+		if (!file.exists()) return null;
+		
+		PagedDocument doc = this._docs.get(documentName);
+		if (doc == null) {
+			int linesOnPage = Config.V.chatBoxHeightInLines;
+			if (Config.M.pageFooter.hasContent()) linesOnPage--;
+			if (Config.M.pageHeader.hasContent()) linesOnPage--;
+			doc = new PagedDocument(file, Config.V.chatBoxWidthInPixels, linesOnPage);
+			this._docs.put(documentName, doc);
+		}
+		return doc;
 	}
 
 	private String firstCharacterUpperCase(String command) {

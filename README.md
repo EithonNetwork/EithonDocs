@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.5 (2016-01-24)
+
+* CHANGE: Now uses EithonCommand.
+
 ### 2.4 (2015-10-18)
 
 * CHANGE: Refactoring EithonLibrary.

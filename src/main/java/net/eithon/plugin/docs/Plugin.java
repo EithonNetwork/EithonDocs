@@ -8,7 +8,8 @@ public final class Plugin extends EithonPlugin {
 	public void onEnable() {
 		super.onEnable();
 		Config.load(this);
-		super.activate(new CommandHandler(this), null);
+		CommandHandler commandHandler = new CommandHandler(this);
+		super.activate(commandHandler.getCommandSyntax(), null);
 	}
 
 	@Override
