@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>net.eithon.plugin</groupId>
 			<artifactId>EithonLibrary</artifactId>
-			<version>[4.0,)</version>
+			<version>[4.9,)</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

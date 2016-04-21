@@ -9,7 +9,7 @@ public final class Plugin extends EithonPlugin {
 		super.onEnable();
 		Config.load(this);
 		CommandHandler commandHandler = new CommandHandler(this);
-		super.activate(commandHandler.getCommandSyntax(), null);
+		super.activate(commandHandler.getCommandSyntax());
 	}
 
 	@Override
