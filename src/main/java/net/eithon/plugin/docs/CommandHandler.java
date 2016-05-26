@@ -42,7 +42,8 @@ public class CommandHandler {
 			commandSyntax.getParameterSyntax("document-name")
 			.setMandatoryValues(ec -> EithonCommandUtilities.getFileNames(this._textFileFolder, ".txt"));
 			commandSyntax.getParameterSyntax("page-number")
-			.setMandatoryValues(ec -> getPageRange(ec));
+			.setMandatoryValues(ec -> getPageRange(ec))
+			.setDefault(1);
 		} catch (CommandSyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
