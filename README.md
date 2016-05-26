@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.5.1 (2016-05-26)
+
+* BUG: Default value was missing for the page number.
+
 ### 2.5 (2016-01-24)
 
 * CHANGE: Now uses EithonCommand.
