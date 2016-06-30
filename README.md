@@ -6,6 +6,10 @@ A documentation plugin for Minecraft.
 
 ## Release history
 
+### 2.6 (2016-06-30)
+
+* CHANGE: Minecraft 1.10
+
 ### 2.5.1 (2016-05-26)
 
 * BUG: Default value was missing for the page number.
