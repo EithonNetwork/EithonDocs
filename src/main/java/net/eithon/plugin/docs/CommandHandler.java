@@ -11,7 +11,6 @@ import net.eithon.library.command.ICommandSyntax;
 import net.eithon.library.extensions.EithonPlayer;
 import net.eithon.library.extensions.EithonPlugin;
 import net.eithon.library.file.FileMisc;
-import net.eithon.library.plugin.Logger.DebugPrintLevel;
 
 import org.bukkit.entity.Player;
 
@@ -136,9 +135,8 @@ public class CommandHandler {
 		if (!txtFolder.exists()) txtFolder.mkdir();
 		return txtFolder;
 	}
-	
-	void verbose(String method, String format, Object... args) {
-		String message = String.format(format,  args);
-		this._eithonPlugin.getEithonLogger().debug(DebugPrintLevel.VERBOSE, "CommandHandler.%s: %s", method, message);
+
+	private void verbose(String method, String format, Object... args) {
+		this._eithonPlugin.dbgVerbose("CommandHandler", method, format, args);	
 	}
 }
